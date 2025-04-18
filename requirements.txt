@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+pikepdf
+pdfplumber
+reportlab
+Pillow
+pymupdf
+python-docx
+boto3
