@@ -1,0 +1,10 @@
+{
+	"InstallScripts" : 
+	[
+		"/home/user/mobile_pdf_tool/build/cmake_install.cmake",
+		"/home/user/mobile_pdf_tool/build/flutter/cmake_install.cmake",
+		"/home/user/mobile_pdf_tool/build/runner/cmake_install.cmake",
+		"/home/user/mobile_pdf_tool/build/plugins/url_launcher_linux/cmake_install.cmake"
+	],
+	"Parallel" : false
+}
