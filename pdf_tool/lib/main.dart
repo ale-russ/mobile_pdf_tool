@@ -24,7 +24,7 @@ class MyApp extends ConsumerWidget {
         useMaterial3: true,
         brightness: isDarkMode ? Brightness.dark : Brightness.light,
         primarySwatch: Colors.blue,
-        scaffoldBackgroundColor: isDarkMode ? Color(0xFF1E2A47) : Colors.white,
+        scaffoldBackgroundColor: isDarkMode ? Color(0xFF00030C) : Colors.white,
         textTheme: TextTheme(
           bodyLarge: TextStyle(color: isDarkMode ? Colors.white : Colors.black),
         ),

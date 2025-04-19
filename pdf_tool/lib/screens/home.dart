@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -23,6 +25,8 @@ class HomeScreen extends ConsumerWidget {
                   type: FileType.custom,
                   allowedExtensions: ['pdf'],
                 );
+                log('result: $result');
+
                 if (result != null) {
                   ref
                       .read(pdfStateProvider.notifier)

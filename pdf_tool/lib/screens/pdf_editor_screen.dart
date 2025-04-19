@@ -1,5 +1,6 @@
 // ignore_for_file: no_leading_underscores_for_local_identifiers
 
+import 'dart:developer';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -10,9 +11,13 @@ import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import '../providers/action_history_provider.dart';
 import '../providers/pdf_state_provider.dart';
 import '../providers/theme_provider.dart';
+import '../widgets/action_buttons.dart';
+import '../widgets/feature_buttons.dart';
 
 class PdfEditorScreen extends ConsumerWidget {
-  const PdfEditorScreen({super.key});
+  PdfEditorScreen({super.key});
+
+  final GlobalKey<SfPdfViewerState> _pdfViewerKey = GlobalKey();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -89,16 +94,17 @@ class PdfEditorScreen extends ConsumerWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                _buildActionButton(
-                  context,
-                  Icons.file_download,
-                  'Import',
-                  () async {
+                ActionButtons(
+                  context: context,
+                  icon: Icons.file_download,
+                  label: 'Import',
+                  onPressed: () async {
                     FilePickerResult? result = await FilePicker.platform
                         .pickFiles(
                           type: FileType.custom,
                           allowedExtensions: ['pdf'],
                         );
+                    log('Result: $result');
                     if (result != null) {
                       ref
                           .read(pdfStateProvider.notifier)
@@ -109,49 +115,52 @@ class PdfEditorScreen extends ConsumerWidget {
                     }
                   },
                 ),
-                _buildActionButton(
-                  context,
-                  Icons.file_upload,
-                  'Export',
-                  _exportPdf,
+                ActionButtons(
+                  context: context,
+                  icon: Icons.file_upload,
+                  label: 'Export',
+                  onPressed: _exportPdf,
                 ),
-                _buildActionButton(
-                  context,
-                  Icons.undo,
-                  'Undo',
-                  canUndo
-                      ? () {
-                        ref.read(actionHistoryProvider.notifier).undo();
-                        ScaffoldMessenger.of(
-                          context,
-                        ).showSnackBar(SnackBar(content: Text('Undo action')));
-                      }
-                      : null,
+                ActionButtons(
+                  context: context,
+                  icon: Icons.undo,
+                  label: 'Undo',
+                  onPressed:
+                      canUndo
+                          ? () {
+                            ref.read(actionHistoryProvider.notifier).undo();
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('Undo action')),
+                            );
+                          }
+                          : null,
                 ),
-                _buildActionButton(
-                  context,
-                  Icons.redo,
-                  'Redo',
-                  canRedo
-                      ? () {
-                        ref.read(actionHistoryProvider.notifier).redo();
-                        ScaffoldMessenger.of(
-                          context,
-                        ).showSnackBar(SnackBar(content: Text('Redo action')));
-                      }
-                      : null,
+                ActionButtons(
+                  context: context,
+                  icon: Icons.redo,
+                  label: 'Redo',
+                  onPressed:
+                      canRedo
+                          ? () {
+                            ref.read(actionHistoryProvider.notifier).redo();
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('Redo action')),
+                            );
+                          }
+                          : null,
                 ),
               ],
             ),
           ),
           // PDF Viewer
-          SizedBox(
-            height: MediaQuery.of(context).size.height * 0.4,
-            child: Expanded(
+          Expanded(
+            child: SizedBox(
+              height: MediaQuery.of(context).size.height * 0.4,
               child:
                   pdfState.pdfPath != null
                       ? SizedBox(
                         child: SfPdfViewer.file(
+                          key: _pdfViewerKey,
                           File(pdfState.pdfPath!),
                           onDocumentLoaded: (details) {
                             ref
@@ -219,71 +228,33 @@ class PdfEditorScreen extends ConsumerWidget {
               mainAxisSpacing: 16,
               childAspectRatio: 1.8,
               children: [
-                _buildFeatureButton(
-                  context,
-                  Icons.merge_type,
-                  'Merge PDFs',
-                  _mergePdfs,
+                FeatureButtons(
+                  context: context,
+                  icon: Icons.merge_type,
+                  label: 'Merge PDFs',
+                  onPressed: _mergePdfs,
                 ),
-                _buildFeatureButton(
-                  context,
-                  Icons.call_split,
-                  'Split PDFs',
-                  _splitPdfs,
+                FeatureButtons(
+                  context: context,
+                  icon: Icons.call_split,
+                  label: 'Split PDFs',
+                  onPressed: _splitPdfs,
                 ),
-                _buildFeatureButton(
-                  context,
-                  Icons.description,
-                  'Convert to Word',
-                  _convertToWord,
+                FeatureButtons(
+                  context: context,
+                  icon: Icons.description,
+                  label: 'Convert to Word',
+                  onPressed: _convertToWord,
                 ),
-                _buildFeatureButton(
-                  context,
-                  Icons.layers,
-                  'Extract Pages',
-                  _extractPages,
+                FeatureButtons(
+                  context: context,
+                  icon: Icons.layers,
+                  label: 'Extract Pages',
+                  onPressed: _extractPages,
                 ),
               ],
             ),
           ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildActionButton(
-    BuildContext context,
-    IconData icon,
-    String label,
-    VoidCallback? onPressed,
-  ) {
-    return Column(
-      children: [
-        IconButton(icon: Icon(icon, color: Colors.grey), onPressed: onPressed),
-        Text(label, style: TextStyle(color: Colors.grey)),
-      ],
-    );
-  }
-
-  Widget _buildFeatureButton(
-    BuildContext context,
-    IconData icon,
-    String label,
-    VoidCallback onPressed,
-  ) {
-    return ElevatedButton(
-      onPressed: onPressed,
-      style: ElevatedButton.styleFrom(
-        minimumSize: Size(100, 80),
-        backgroundColor: Color(0xFF2A3A64),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon, size: 40, color: Colors.white),
-          SizedBox(height: 8),
-          Text(label, style: TextStyle(color: Colors.white)),
         ],
       ),
     );
