@@ -10,10 +10,11 @@
 					[
 						1,
 						2,
-						3
+						3,
+						4
 					],
 					"hasInstallRule" : true,
-					"jsonFile" : "directory-.-Debug-74f130ee358b0a6c68e9.json",
+					"jsonFile" : "directory-.-Debug-0515199acd2b014b23b4.json",
 					"minimumCMakeVersion" : 
 					{
 						"string" : "3.13"
@@ -48,6 +49,21 @@
 					"source" : "runner",
 					"targetIndexes" : 
 					[
+						2
+					]
+				},
+				{
+					"build" : "plugins/open_file_linux",
+					"jsonFile" : "directory-plugins.open_file_linux-Debug-26fbcf1919955981f467.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.10"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 1,
+					"source" : "flutter/ephemeral/.plugin_symlinks/open_file_linux/linux",
+					"targetIndexes" : 
+					[
 						1
 					]
 				},
@@ -59,11 +75,11 @@
 						"string" : "3.10"
 					},
 					"parentIndex" : 0,
-					"projectIndex" : 1,
+					"projectIndex" : 2,
 					"source" : "flutter/ephemeral/.plugin_symlinks/url_launcher_linux/linux",
 					"targetIndexes" : 
 					[
-						2
+						3
 					]
 				}
 			],
@@ -73,7 +89,8 @@
 				{
 					"childIndexes" : 
 					[
-						1
+						1,
+						2
 					],
 					"directoryIndexes" : 
 					[
@@ -85,7 +102,7 @@
 					"targetIndexes" : 
 					[
 						0,
-						1
+						2
 					]
 				},
 				{
@@ -93,11 +110,23 @@
 					[
 						3
 					],
+					"name" : "open_file_linux",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						1
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						4
+					],
 					"name" : "url_launcher_linux",
 					"parentIndex" : 0,
 					"targetIndexes" : 
 					[
-						2
+						3
 					]
 				}
 			],
@@ -111,18 +140,25 @@
 					"projectIndex" : 0
 				},
 				{
+					"directoryIndex" : 3,
+					"id" : "open_file_linux_plugin::@fa95addebb39b6c10ed7",
+					"jsonFile" : "target-open_file_linux_plugin-Debug-3e5266a5f18d2283c7e5.json",
+					"name" : "open_file_linux_plugin",
+					"projectIndex" : 1
+				},
+				{
 					"directoryIndex" : 2,
 					"id" : "pdf_tool::@056c4f61b0156d1d9b06",
-					"jsonFile" : "target-pdf_tool-Debug-cd60ccabea88d5e862a8.json",
+					"jsonFile" : "target-pdf_tool-Debug-eb1c81010a334f53e743.json",
 					"name" : "pdf_tool",
 					"projectIndex" : 0
 				},
 				{
-					"directoryIndex" : 3,
+					"directoryIndex" : 4,
 					"id" : "url_launcher_linux_plugin::@f99505b10d3d80eeda47",
 					"jsonFile" : "target-url_launcher_linux_plugin-Debug-3dce9c459e9bbde6a28a.json",
 					"name" : "url_launcher_linux_plugin",
-					"projectIndex" : 1
+					"projectIndex" : 2
 				}
 			]
 		}

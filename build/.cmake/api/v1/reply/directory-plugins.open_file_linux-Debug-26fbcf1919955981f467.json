@@ -1,0 +1,14 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : [],
+		"files" : [],
+		"nodes" : []
+	},
+	"installers" : [],
+	"paths" : 
+	{
+		"build" : "plugins/open_file_linux",
+		"source" : "flutter/ephemeral/.plugin_symlinks/open_file_linux/linux"
+	}
+}

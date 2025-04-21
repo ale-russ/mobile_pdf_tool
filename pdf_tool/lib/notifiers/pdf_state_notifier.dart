@@ -5,8 +5,19 @@ import '../providers/pdf_state_provider.dart';
 class PdfStateNotifier extends StateNotifier<PdfState> {
   PdfStateNotifier() : super(PdfState());
 
-  void setPdfPath(String path) {
-    state = state.copyWith(pdfPath: path);
+  void setPdfPath(List<String> paths) {
+    state = state.copyWith(pdfPaths: paths);
+  }
+
+  // void addSelectedPdf(List<String> paths) {
+  //   state = state.copyWith(
+  //     pdfPaths: paths,
+  //     selectedPdfs: [...state.selectedPdfs, paths],
+  //   );
+  // }
+
+  void clearSelectedPdfs() {
+    state = state.copyWith(selectedPdfs: []);
   }
 
   void setPageInfo(int currentPage, int totalPages) {

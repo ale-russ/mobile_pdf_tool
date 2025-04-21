@@ -10,17 +10,29 @@ final pdfStateProvider = StateNotifierProvider<PdfStateNotifier, PdfState>((
 });
 
 class PdfState {
-  final String? pdfPath;
+  final List<String>? pdfPaths;
   final int currentPage;
   final int totalPages;
+  final List<String> selectedPdfs;
 
-  PdfState({this.pdfPath, this.currentPage = 1, this.totalPages = 1});
+  PdfState({
+    this.pdfPaths,
+    this.currentPage = 1,
+    this.totalPages = 1,
+    this.selectedPdfs = const [],
+  });
 
-  PdfState copyWith({String? pdfPath, int? currentPage, int? totalPages}) {
+  PdfState copyWith({
+    List<String>? pdfPaths,
+    int? currentPage,
+    int? totalPages,
+    List<String>? selectedPdfs,
+  }) {
     return PdfState(
-      pdfPath: pdfPath ?? this.pdfPath,
+      pdfPaths: pdfPaths ?? this.pdfPaths,
       currentPage: currentPage ?? this.currentPage,
       totalPages: totalPages ?? this.totalPages,
+      selectedPdfs: selectedPdfs ?? [],
     );
   }
 }

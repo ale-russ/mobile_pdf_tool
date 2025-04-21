@@ -47,6 +47,12 @@
 			{
 				"command" : 0,
 				"file" : 0,
+				"line" : 104,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
 				"line" : 111,
 				"parent" : 0
 			},
@@ -80,7 +86,7 @@
 				"intermediates_do_not_run/pdf_tool"
 			],
 			"targetId" : "pdf_tool::@056c4f61b0156d1d9b06",
-			"targetIndex" : 1,
+			"targetIndex" : 2,
 			"type" : "target"
 		},
 		{
@@ -109,12 +115,22 @@
 			"destination" : "/home/user/mobile_pdf_tool/build/bundle/lib",
 			"paths" : 
 			[
-				"/home/user/mobile_pdf_tool/build/plugins/url_launcher_linux/liburl_launcher_linux_plugin.so"
+				"/home/user/mobile_pdf_tool/build/plugins/open_file_linux/libopen_file_linux_plugin.so"
 			],
 			"type" : "file"
 		},
 		{
 			"backtrace" : 6,
+			"component" : "Runtime",
+			"destination" : "/home/user/mobile_pdf_tool/build/bundle/lib",
+			"paths" : 
+			[
+				"/home/user/mobile_pdf_tool/build/plugins/url_launcher_linux/liburl_launcher_linux_plugin.so"
+			],
+			"type" : "file"
+		},
+		{
+			"backtrace" : 7,
 			"component" : "Runtime",
 			"destination" : "/home/user/mobile_pdf_tool/build/bundle/lib",
 			"paths" : 
@@ -127,12 +143,12 @@
 			"type" : "directory"
 		},
 		{
-			"backtrace" : 7,
+			"backtrace" : 8,
 			"component" : "Runtime",
 			"type" : "code"
 		},
 		{
-			"backtrace" : 8,
+			"backtrace" : 9,
 			"component" : "Runtime",
 			"destination" : "/home/user/mobile_pdf_tool/build/bundle/data",
 			"paths" : 

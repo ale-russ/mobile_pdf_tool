@@ -10,7 +10,7 @@ Future<void> _mergePdfs(WidgetRef ref) async {
   var dio = Dio();
   var formData = FormData();
 
-  List<String> filePaths = [ref.read(pdfStateProvider).pdfPath!];
+  List<String> filePaths = [ref.read(pdfStateProvider).pdfPaths!.first];
   for (var path in filePaths) {
     formData.files.add(MapEntry("files", await MultipartFile.fromFile(path)));
   }

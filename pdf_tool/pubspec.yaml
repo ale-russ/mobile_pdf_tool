@@ -41,6 +41,11 @@ dependencies:
   go_router: ^15.0.0
   http: ^1.3.0
   dio: ^5.8.0+1
+  path_provider: ^2.1.5
+  open_file: ^3.5.10
+  syncfusion_flutter_pdf: ^29.1.38
+  # permission_handler: ^12.0.0+1
+  # permission_handler_web: ^0.0.2
 
 dev_dependencies:
   flutter_test:

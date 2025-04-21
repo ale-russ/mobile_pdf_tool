@@ -28,9 +28,9 @@ class HomeScreen extends ConsumerWidget {
                 log('result: $result');
 
                 if (result != null) {
-                  ref
-                      .read(pdfStateProvider.notifier)
-                      .setPdfPath(result.files.single.path!);
+                  List<String> paths =
+                      result.paths.whereType<String>().toList();
+                  ref.read(pdfStateProvider.notifier).setPdfPath(paths);
                   ref
                       .read(actionHistoryProvider.notifier)
                       .addAction('Imported PDF');
