@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:image/image.dart' as img;
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
@@ -82,6 +83,60 @@ class PdfUtil {
 
     document.dispose();
     return outputFiles;
+  }
+
+  // static Future<String> convertPDFToWord(String pdfPath) async {
+  //   //Load the pdf
+  //   final PdfDocument document = PdfDocument(
+  //     inputBytes: await File(pdfPath).readAsBytes(),
+  //   );
+
+  //   // Extract text from all pages
+  //   final StringBuffer textBuffer = StringBuffer();
+  //   for (int i = 0; i < document.pages.count; i++) {
+  //     final String pageText = PdfTextExtractor(
+  //       document,
+  //     ).extractText(startPageIndex: i);
+  //     textBuffer.writeln(pageText);
+  //   }
+
+  //   document.dispose();
+
+  //   // Create a Word Document
+  //   final doc = docx.Document();
+  //   doc.addParagraph(docx.Paragraph.wthText(textBuffer.toString()));
+
+  //   // save the .docx file
+  //   final List<int> docxBytes = await doc.save();
+  //   final Directory directory = await getApplicationCacheDirectory();
+  //   final String docxPath = '${directory.path}/converted.docx';
+  //   final File docxFile = File(docxPath);
+  //   await docxFile.writeAsBytes(docxBytes, flush: true);
+
+  //   return docxPath;
+  // }
+
+  // Convert an image to PDF
+  static Future<String> imageToPdf(String imagePath) async {
+    final PdfDocument document = PdfDocument();
+    final PdfPage page = document.pages.add();
+    final img.Image? image = img.decodedImage(
+      await File(imagePath).readAsBytes(),
+    );
+    if (image == null) throw Exception('Falied to decode image for PDF Conversion');
+
+    // convert image to bytes for PDF
+    final Uint8List imageBytes = Uint8List.fromList(img.encodeJpg(image));
+    final PdfBitmap pdfImage = PdfBitmap(imageBytes);
+
+    page.graphics.drawImage(pdfImage, Rect.fromLTWH(0,0 page.getClientSize().width, page.getClientSize().height));
+
+    // save the pdf
+    final Directory directory = await getApplicationSupportDirectory();
+    final String pdfPath = '${directory.path}/scanned_document.pdf';
+    await File(pdfPath).writeAsBytes(await document.save());
+    document.dispose();
+    return pdfPath;
   }
 
   //save a single File

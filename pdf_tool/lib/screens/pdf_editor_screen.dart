@@ -12,6 +12,7 @@ import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import '../providers/action_history_provider.dart';
 import '../providers/pdf_state_provider.dart';
 import '../providers/theme_provider.dart';
+import '../services/pdf_services.dart';
 import '../utils/pdf_util.dart';
 import '../widgets/action_buttons.dart';
 import '../widgets/feature_buttons.dart';
@@ -74,7 +75,21 @@ class PdfEditorScreen extends ConsumerWidget {
   }
 
   void _convertToWord(WidgetRef ref, BuildContext context) async {
-    // Placeholder for convert logic (call backend)
+    final pdfState = ref.watch(pdfStateProvider);
+
+    if (pdfState.pdfPaths == null) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('No PDF Loaded')));
+      return;
+    }
+
+    final String pdfPath = pdfState.pdfPaths!.first;
+
+    var response = await PdfServices().convertPdfToWord(pdfPath);
+
+    log('response: $response');
+
     ref.read(actionHistoryProvider.notifier).addAction('Converted to Word');
     ScaffoldMessenger.of(
       context,

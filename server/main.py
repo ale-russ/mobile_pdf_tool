@@ -128,6 +128,7 @@ async def split_pdf(file: UploadFile = File(...), pages: str = Form("")):
 @app.post("/convert-to-word")
 async def convert_to_word(file: UploadFile = File(...)):
     file_path = await save_uploaded_file(file)
+    print(f'file_path: {file_path}')
     output_path = os.path.join(TEMP_DIR, "output.docx")
     doc = Document()
 
@@ -143,7 +144,7 @@ async def convert_to_word(file: UploadFile = File(...)):
         s3_url = upload_to_s3(output_path, "output.docx")
         return {"message": "Converted to Word successfully", "url": s3_url}
 
-    return FileResponse(output_path, medai_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document", filename="output.docx")
+    return FileResponse(output_path, media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document", filename="output.docx")
 
 
 # Extract Pages (Similar to split but returns specific pages)

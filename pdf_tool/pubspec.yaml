@@ -44,7 +44,9 @@ dependencies:
   path_provider: ^2.1.5
   open_file: ^3.5.10
   syncfusion_flutter_pdf: ^29.1.38
-  # permission_handler: ^12.0.0+1
+  edge_detection: ^1.1.3
+  permission_handler: ^12.0.0+1
+  image: ^4.5.4
   # permission_handler_web: ^0.0.2
 
 dev_dependencies:
