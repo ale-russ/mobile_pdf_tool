@@ -32,7 +32,7 @@ class PdfState {
       pdfPaths: pdfPaths ?? this.pdfPaths,
       currentPage: currentPage ?? this.currentPage,
       totalPages: totalPages ?? this.totalPages,
-      selectedPdfs: selectedPdfs ?? [],
+      selectedPdfs: selectedPdfs ?? this.selectedPdfs,
     );
   }
 }

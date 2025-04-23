@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pdf_tool/screens/merge_pdf.dart';
 import 'package:pdf_tool/screens/pdf_editor_screen.dart';
 
 import '../utils/app_colors.dart';
@@ -70,10 +71,18 @@ class _MainTabViewScreenState extends ConsumerState<MainTabViewScreen> {
               title: "Scan Document",
             ),
             TabButton(
-              icon: Icons.edit_document,
-              onTap: () {},
-              isSelected: selectedTab == 3,
-              title: "Convert To Word",
+              icon: Icons.call_merge_outlined,
+              onTap: () {
+                if (selectedTab != 1) {
+                  selectedTab = 1;
+                  selectPageView = MergePdfScreen();
+                }
+                if (mounted) {
+                  setState(() {});
+                }
+              },
+              isSelected: selectedTab == 1,
+              title: "Merge PDF",
             ),
           ],
         ),

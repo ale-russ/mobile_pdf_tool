@@ -137,14 +137,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.8"
-  dartcv4:
-    dependency: transitive
-    description:
-      name: dartcv4
-      sha256: "383231deeaf16a1da4ee0eb098ab969f637a33d7ed84bbdd6b59d213ef1f3bc3"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.1.3"
   device_info_plus:
     dependency: transitive
     description:
@@ -180,10 +172,11 @@ packages:
   edge_detection:
     dependency: "direct main"
     description:
-      name: edge_detection
-      sha256: "515bc8b797382f567fd27f2ac972b804077e616865b071a8f6abb568c6aaac4e"
-      url: "https://pub.dev"
-    source: hosted
+      path: "."
+      ref: master
+      resolved-ref: c26bed6e790dcc805fef1a060f910e5fa6919982
+      url: "https://github.com/rushabhnavadiya/edge_detection.git"
+    source: git
     version: "1.1.3"
   fake_async:
     dependency: transitive
@@ -536,22 +529,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.0.3"
-  opencv_core:
-    dependency: "direct main"
-    description:
-      name: opencv_core
-      sha256: "713ce0400bf81996009b3c98dbf25643546574637d35d3604792253317ee3824"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.4.1"
-  opencv_dart:
-    dependency: "direct main"
-    description:
-      name: opencv_dart
-      sha256: "0c31f9352951147a463a96c117e5bd54777fa99fe5b12c1c2e351a543fac2c2f"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.4.1"
   path:
     dependency: transitive
     description:

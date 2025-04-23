@@ -44,13 +44,17 @@ dependencies:
   path_provider: ^2.1.5
   open_file: ^3.5.10
   syncfusion_flutter_pdf: ^29.1.38
-  edge_detection: ^1.0.8
+  # edge_detection: ^1.0.8
+  edge_detection:
+    git:
+      url: https://github.com/rushabhnavadiya/edge_detection.git
+      ref: master
   permission_handler: ^12.0.0+1
   image: ^4.5.4
   camera: ^0.11.1
   image_picker: ^1.1.2
-  opencv_dart: ^1.4.1
-  opencv_core: ^1.4.1
+  # opencv_dart: ^1.4.1
+  # opencv_core: ^1.4.1
   pdf: ^3.11.3
   
   # permission_handler_web: ^0.0.2

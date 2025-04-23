@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 
 import '../providers/action_history_provider.dart';
 import '../providers/pdf_state_provider.dart';
@@ -37,21 +36,27 @@ class HomeScreen extends ConsumerWidget {
                 onPressed: () async {
                   FilePickerResult? result = await FilePicker.platform
                       .pickFiles(
-                        type: FileType.custom,
+                        type: FileType.any,
                         allowMultiple: true,
-                        allowedExtensions: ['pdf'],
+                        // allowedExtensions: ['pdf'],
                       );
-                  log('Result: $result');
+
+                  log('Picked files: ${result?.paths}');
                   if (result != null && result.files.isNotEmpty) {
                     final validPaths =
                         result.paths
                             .whereType<String>()
                             .where((path) => File(path).existsSync())
                             .toList();
+                    log('Valid paths: $validPaths');
                     if (validPaths.isNotEmpty) {
                       List<String> paths =
                           result.paths.whereType<String>().toList();
                       ref.read(pdfStateProvider.notifier).setPdfPath(paths);
+                      ref.read(pdfStateProvider.notifier).state = ref
+                          .read(pdfStateProvider)
+                          .copyWith(selectedPdfs: validPaths);
+
                       ref
                           .read(actionHistoryProvider.notifier)
                           .addAction('Imported PDF');
@@ -103,33 +108,6 @@ class HomeScreen extends ConsumerWidget {
         ),
       ),
       body: MainTabViewScreen(),
-      // Center(
-      //   child: Column(
-      //     mainAxisAlignment: MainAxisAlignment.center,
-      //     children: [
-      //       ElevatedButton(
-      //         onPressed: () async {
-      //           FilePickerResult? result = await FilePicker.platform.pickFiles(
-      //             type: FileType.custom,
-      //             allowedExtensions: ['pdf'],
-      //           );
-      //           log('result: $result');
-
-      //           if (result != null) {
-      //             List<String> paths =
-      //                 result.paths.whereType<String>().toList();
-      //             ref.read(pdfStateProvider.notifier).setPdfPath(paths);
-      //             ref
-      //                 .read(actionHistoryProvider.notifier)
-      //                 .addAction('Imported PDF');
-      //             context.go('/editor');
-      //           }
-      //         },
-      //         child: Text('Import PDF'),
-      //       ),
-      //     ],
-      //   ),
-      // ),
     );
   }
 }

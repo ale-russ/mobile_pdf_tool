@@ -16,6 +16,10 @@ class PdfStateNotifier extends StateNotifier<PdfState> {
   //   );
   // }
 
+  void setSelectedPdfs(List<String> selectedPdfs) {
+    state = state.copyWith(selectedPdfs: selectedPdfs);
+  }
+
   void clearSelectedPdfs() {
     state = state.copyWith(selectedPdfs: []);
   }

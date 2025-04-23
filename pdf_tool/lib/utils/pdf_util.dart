@@ -8,29 +8,68 @@ import 'dart:ui';
 
 class PdfUtil {
   // Merge multiple PDFs into a single PDF file
+  // static Future<Uint8List> mergePDFs(List<String> pdfPaths) async {
+  //   final PdfDocument mergedDocument = PdfDocument();
+
+  //   for (String path in pdfPaths) {
+  //     final PdfDocument loadedDocument = PdfDocument(
+  //       inputBytes: File(path).readAsBytesSync(),
+  //     );
+
+  //     // Import all pages from the loaded document
+  //     mergedDocument.pages.add().graphics.drawPdfTemplate(
+  //       loadedDocument.pages[0].createTemplate(),
+  //       const Offset(0, 0),
+  //     );
+
+  //     for (int i = 0; i < loadedDocument.pages.count; i++) {
+  //       final page = mergedDocument.pages.add();
+  //       page.graphics.drawPdfTemplate(
+  //         loadedDocument.pages[i].createTemplate(),
+  //         const Offset(0, 0),
+  //       );
+  //       // final PdfTemplate template = loadedDocument.pages[i].createTemplate();
+  //       // mergedDocument.pages[mergedDocument.pages.count - 1].graphics
+  //       //     .drawPdfTemplate(template, const Offset(0, 0));
+  //     }
+
+  //     loadedDocument.dispose();
+  //   }
+
+  //   // final Uint8List bytes = Uint8List.fromList(await mergedDocument.save());
+  //   // mergedDocument.dispose();
+  //   return mergedDocument.save();
+  // }
+
   static Future<Uint8List> mergePDFs(List<String> pdfPaths) async {
-    final PdfDocument mergedDocument = PdfDocument();
+    final PdfDocument outputDocument = PdfDocument();
 
     for (String path in pdfPaths) {
-      final PdfDocument loadedDocument = PdfDocument(
-        inputBytes: await File(path).readAsBytes(),
+      final PdfDocument inputDoc = PdfDocument(
+        inputBytes: File(path).readAsBytesSync(),
       );
 
-      // Import all pages from the loaded document
-      for (int i = 0; i < loadedDocument.pages.count; i++) {
-        mergedDocument.pages.add();
-        final PdfPageTemplateElement template =
-            loadedDocument.pages[i].createTemplate() as PdfPageTemplateElement;
-        mergedDocument.pages[mergedDocument.pages.count - 1].graphics
-            .drawPdfTemplate(template as PdfTemplate, const Offset(0, 0));
+      // Import each page properly
+      outputDocument.pages.add().graphics.drawPdfTemplate(
+        inputDoc.pages[0].createTemplate(),
+        const Offset(0, 0),
+      );
+
+      for (int i = 1; i < inputDoc.pages.count; i++) {
+        final page = outputDocument.pages.add();
+        page.graphics.drawPdfTemplate(
+          inputDoc.pages[i].createTemplate(),
+          const Offset(0, 0),
+        );
       }
 
-      loadedDocument.dispose();
+      inputDoc.dispose();
     }
 
-    final Uint8List bytes = Uint8List.fromList(await mergedDocument.save());
-    mergedDocument.dispose();
-    return bytes;
+    final List<int> bytes = await outputDocument.save();
+    outputDocument.dispose();
+
+    return Uint8List.fromList(bytes);
   }
 
   static Future<List<Uint8List>> splitPdf(
