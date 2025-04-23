@@ -120,110 +120,110 @@ class PdfEditorScreen extends ConsumerWidget {
     final canRedo = ref.watch(actionHistoryProvider.notifier).canRedo;
 
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () => context.go('/'),
-        ),
-        title: Text('PDF Editor'),
-        actions: [
-          IconButton(
-            icon: Icon(
-              ref.watch(themeProvider)
-                  ? Icons.brightness_7
-                  : Icons.brightness_4,
-            ),
-            onPressed: () {
-              ref.read(themeProvider.notifier).state = !ref.read(themeProvider);
-            },
-          ),
-        ],
-      ),
+      // appBar: AppBar(
+      //   leading: IconButton(
+      //     icon: Icon(Icons.arrow_back),
+      //     onPressed: () => context.go('/'),
+      //   ),
+      //   title: Text('PDF Editor'),
+      //   actions: [
+      //     IconButton(
+      //       icon: Icon(
+      //         ref.watch(themeProvider)
+      //             ? Icons.brightness_7
+      //             : Icons.brightness_4,
+      //       ),
+      //       onPressed: () {
+      //         ref.read(themeProvider.notifier).state = !ref.read(themeProvider);
+      //       },
+      //     ),
+      //   ],
+      // ),
       body: Column(
         children: [
           // Action Bar
-          Padding(
-            padding: const EdgeInsets.all(4.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                ActionButtons(
-                  context: context,
-                  icon: Icons.file_download,
-                  label: 'Import',
-                  onPressed: () async {
-                    FilePickerResult? result = await FilePicker.platform
-                        .pickFiles(
-                          type: FileType.custom,
-                          allowMultiple: true,
-                          allowedExtensions: ['pdf'],
-                        );
-                    log('Result: $result');
-                    if (result != null && result.files.isNotEmpty) {
-                      final validPaths =
-                          result.paths
-                              .whereType<String>()
-                              .where((path) => File(path).existsSync())
-                              .toList();
-                      if (validPaths.isNotEmpty) {
-                        List<String> paths =
-                            result.paths.whereType<String>().toList();
-                        ref.read(pdfStateProvider.notifier).setPdfPath(paths);
-                        ref
-                            .read(actionHistoryProvider.notifier)
-                            .addAction('Imported PDF');
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text("No Valid PDFs found!")),
-                        );
-                      }
-                    }
-                  },
-                ),
-                ActionButtons(
-                  context: context,
-                  icon: Icons.file_upload,
-                  label: 'Export',
-                  onPressed: () => _exportPdf(ref, context),
-                ),
-                ActionButtons(
-                  context: context,
-                  icon: Icons.undo,
-                  label: 'Undo',
-                  onPressed:
-                      canUndo
-                          ? () {
-                            ref.read(actionHistoryProvider.notifier).undo();
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('Undo action')),
-                            );
-                          }
-                          : null,
-                ),
-                ActionButtons(
-                  context: context,
-                  icon: Icons.redo,
-                  label: 'Redo',
-                  onPressed:
-                      canRedo
-                          ? () {
-                            ref.read(actionHistoryProvider.notifier).redo();
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('Redo action')),
-                            );
-                          }
-                          : null,
-                ),
-              ],
-            ),
-          ),
+          // Padding(
+          //   padding: const EdgeInsets.all(4.0),
+          //   child: Row(
+          //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          //     children: [
+          //       ActionButtons(
+          //         context: context,
+          //         icon: Icons.file_download,
+          //         label: 'Import',
+          //         onPressed: () async {
+          //           FilePickerResult? result = await FilePicker.platform
+          //               .pickFiles(
+          //                 type: FileType.custom,
+          //                 allowMultiple: true,
+          //                 allowedExtensions: ['pdf'],
+          //               );
+          //           log('Result: $result');
+          //           if (result != null && result.files.isNotEmpty) {
+          //             final validPaths =
+          //                 result.paths
+          //                     .whereType<String>()
+          //                     .where((path) => File(path).existsSync())
+          //                     .toList();
+          //             if (validPaths.isNotEmpty) {
+          //               List<String> paths =
+          //                   result.paths.whereType<String>().toList();
+          //               ref.read(pdfStateProvider.notifier).setPdfPath(paths);
+          //               ref
+          //                   .read(actionHistoryProvider.notifier)
+          //                   .addAction('Imported PDF');
+          //             } else {
+          //               ScaffoldMessenger.of(context).showSnackBar(
+          //                 SnackBar(content: Text("No Valid PDFs found!")),
+          //               );
+          //             }
+          //           }
+          //         },
+          //       ),
+          //       ActionButtons(
+          //         context: context,
+          //         icon: Icons.file_upload,
+          //         label: 'Export',
+          //         onPressed: () => _exportPdf(ref, context),
+          //       ),
+          //       ActionButtons(
+          //         context: context,
+          //         icon: Icons.undo,
+          //         label: 'Undo',
+          //         onPressed:
+          //             canUndo
+          //                 ? () {
+          //                   ref.read(actionHistoryProvider.notifier).undo();
+          //                   ScaffoldMessenger.of(context).showSnackBar(
+          //                     SnackBar(content: Text('Undo action')),
+          //                   );
+          //                 }
+          //                 : null,
+          //       ),
+          //       ActionButtons(
+          //         context: context,
+          //         icon: Icons.redo,
+          //         label: 'Redo',
+          //         onPressed:
+          //             canRedo
+          //                 ? () {
+          //                   ref.read(actionHistoryProvider.notifier).redo();
+          //                   ScaffoldMessenger.of(context).showSnackBar(
+          //                     SnackBar(content: Text('Redo action')),
+          //                   );
+          //                 }
+          //                 : null,
+          //       ),
+          //     ],
+          //   ),
+          // ),
 
           // PDF Viewer
           Expanded(
             child: SizedBox(
               height: MediaQuery.of(context).size.height * 0.4,
               child:
-                  pdfState.pdfPaths!.isEmpty
+                  pdfState.pdfPaths == null
                       ? Center(child: Text('No PDF loaded'))
                       : pdfState.pdfPaths!.length == 1
                       ? SfPdfViewer.file(
@@ -283,83 +283,6 @@ class PdfEditorScreen extends ConsumerWidget {
                           );
                         },
                       ),
-            ),
-          ),
-
-          // Page Navigation
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                IconButton(
-                  icon: Icon(Icons.arrow_left),
-                  onPressed:
-                      pdfState.currentPage > 1
-                          ? () {
-                            ref
-                                .read(pdfStateProvider.notifier)
-                                .setPageInfo(
-                                  pdfState.currentPage - 1,
-                                  pdfState.totalPages,
-                                );
-                          }
-                          : null,
-                ),
-                Text('${pdfState.currentPage} of ${pdfState.totalPages}'),
-                IconButton(
-                  icon: Icon(Icons.arrow_right),
-                  onPressed:
-                      pdfState.currentPage < pdfState.totalPages
-                          ? () {
-                            ref
-                                .read(pdfStateProvider.notifier)
-                                .setPageInfo(
-                                  pdfState.currentPage + 1,
-                                  pdfState.totalPages,
-                                );
-                          }
-                          : null,
-                ),
-              ],
-            ),
-          ),
-          // Bottom Action Buttons
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: GridView.count(
-              crossAxisCount: 2,
-              shrinkWrap: true,
-              crossAxisSpacing: 16,
-              mainAxisSpacing: 16,
-              childAspectRatio: 2.2,
-              children: [
-                FeatureButtons(
-                  context: context,
-                  icon: Icons.merge_type,
-                  label: 'Merge PDFs',
-                  onPressed: () => _mergePDFs(ref, context),
-                ),
-                FeatureButtons(
-                  context: context,
-                  icon: Icons.call_split,
-                  label: 'Split PDFs',
-                  onPressed:
-                      () => _splitPDFs(context, _splitPointsController, ref),
-                ),
-                FeatureButtons(
-                  context: context,
-                  icon: Icons.description,
-                  label: 'Convert to Word',
-                  onPressed: () => _convertToWord(ref, context),
-                ),
-                FeatureButtons(
-                  context: context,
-                  icon: Icons.layers,
-                  label: 'Extract Pages',
-                  onPressed: () => _extractPages(ref, context),
-                ),
-              ],
             ),
           ),
         ],

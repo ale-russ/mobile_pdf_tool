@@ -120,16 +120,25 @@ class PdfUtil {
   static Future<String> imageToPdf(String imagePath) async {
     final PdfDocument document = PdfDocument();
     final PdfPage page = document.pages.add();
-    final img.Image? image = img.decodedImage(
+    final img.Image? image = img.decodeImage(
       await File(imagePath).readAsBytes(),
     );
-    if (image == null) throw Exception('Falied to decode image for PDF Conversion');
+    if (image == null)
+      throw Exception('Falied to decode image for PDF Conversion');
 
     // convert image to bytes for PDF
     final Uint8List imageBytes = Uint8List.fromList(img.encodeJpg(image));
     final PdfBitmap pdfImage = PdfBitmap(imageBytes);
 
-    page.graphics.drawImage(pdfImage, Rect.fromLTWH(0,0 page.getClientSize().width, page.getClientSize().height));
+    page.graphics.drawImage(
+      pdfImage,
+      Rect.fromLTWH(
+        0,
+        0,
+        page.getClientSize().width,
+        page.getClientSize().height,
+      ),
+    );
 
     // save the pdf
     final Directory directory = await getApplicationSupportDirectory();

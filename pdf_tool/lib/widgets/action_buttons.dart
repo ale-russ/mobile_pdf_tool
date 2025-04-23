@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../utils/app_colors.dart';
+
 class ActionButtons extends StatelessWidget {
   const ActionButtons({
     super.key,
@@ -18,8 +20,11 @@ class ActionButtons extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        IconButton(icon: Icon(icon, color: Colors.grey), onPressed: onPressed),
-        Text(label, style: TextStyle(color: Colors.grey)),
+        IconButton(
+          icon: Icon(icon, color: TColor.primaryText, size: 15),
+          onPressed: onPressed,
+        ),
+        Text(label, style: TextStyle(color: TColor.primaryText, fontSize: 14)),
       ],
     );
   }
