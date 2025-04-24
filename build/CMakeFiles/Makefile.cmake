@@ -11,6 +11,7 @@ set(CMAKE_MAKEFILE_DEPENDS
   "CMakeFiles/4.0.1/CMakeSystem.cmake"
   "/home/user/mobile_pdf_tool/pdf_tool/linux/CMakeLists.txt"
   "/home/user/mobile_pdf_tool/pdf_tool/linux/flutter/CMakeLists.txt"
+  "/home/user/mobile_pdf_tool/pdf_tool/linux/flutter/ephemeral/.plugin_symlinks/file_selector_linux/linux/CMakeLists.txt"
   "/home/user/mobile_pdf_tool/pdf_tool/linux/flutter/ephemeral/.plugin_symlinks/open_file_linux/linux/CMakeLists.txt"
   "/home/user/mobile_pdf_tool/pdf_tool/linux/flutter/ephemeral/.plugin_symlinks/url_launcher_linux/linux/CMakeLists.txt"
   "/home/user/mobile_pdf_tool/pdf_tool/linux/flutter/ephemeral/generated_config.cmake"
@@ -119,6 +120,7 @@ set(CMAKE_MAKEFILE_PRODUCTS
   "CMakeFiles/CMakeDirectoryInformation.cmake"
   "flutter/CMakeFiles/CMakeDirectoryInformation.cmake"
   "runner/CMakeFiles/CMakeDirectoryInformation.cmake"
+  "plugins/file_selector_linux/CMakeFiles/CMakeDirectoryInformation.cmake"
   "plugins/open_file_linux/CMakeFiles/CMakeDirectoryInformation.cmake"
   "plugins/url_launcher_linux/CMakeFiles/CMakeDirectoryInformation.cmake"
   )
@@ -127,6 +129,7 @@ set(CMAKE_MAKEFILE_PRODUCTS
 set(CMAKE_DEPEND_INFO_FILES
   "flutter/CMakeFiles/flutter_assemble.dir/DependInfo.cmake"
   "runner/CMakeFiles/pdf_tool.dir/DependInfo.cmake"
+  "plugins/file_selector_linux/CMakeFiles/file_selector_linux_plugin.dir/DependInfo.cmake"
   "plugins/open_file_linux/CMakeFiles/open_file_linux_plugin.dir/DependInfo.cmake"
   "plugins/url_launcher_linux/CMakeFiles/url_launcher_linux_plugin.dir/DependInfo.cmake"
   )

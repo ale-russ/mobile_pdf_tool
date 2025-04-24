@@ -9,13 +9,6 @@ class PdfStateNotifier extends StateNotifier<PdfState> {
     state = state.copyWith(pdfPaths: paths);
   }
 
-  // void addSelectedPdf(List<String> paths) {
-  //   state = state.copyWith(
-  //     pdfPaths: paths,
-  //     selectedPdfs: [...state.selectedPdfs, paths],
-  //   );
-  // }
-
   void setSelectedPdfs(List<String> selectedPdfs) {
     state = state.copyWith(selectedPdfs: selectedPdfs);
   }

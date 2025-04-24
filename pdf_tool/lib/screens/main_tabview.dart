@@ -23,8 +23,14 @@ class _MainTabViewScreenState extends ConsumerState<MainTabViewScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xfff5f5f5),
-      body: PageStorage(bucket: storageBucket, child: selectPageView),
+      // backgroundColor: const Color(0xfff5f5f5),
+      body: PageStorage(
+        bucket: storageBucket,
+        child: SizedBox(
+          height: MediaQuery.of(context).size.height * 0.8,
+          child: selectPageView,
+        ),
+      ),
       floatingActionButtonLocation:
           FloatingActionButtonLocation.miniCenterDocked,
       floatingActionButton: SizedBox(
@@ -43,13 +49,13 @@ class _MainTabViewScreenState extends ConsumerState<MainTabViewScreen> {
           shape: CircleBorder(),
           backgroundColor:
               selectedTab == 2 ? TColor.primary : TColor.placeholder,
-          child: Icon(Icons.home_rounded, size: 25),
+          child: Icon(Icons.home_rounded, size: 25, color: TColor.textfield),
         ),
       ),
       bottomNavigationBar: BottomAppBar(
         shadowColor: TColor.black,
-        surfaceTintColor: TColor.white,
-        color: TColor.textfield,
+        surfaceTintColor: TColor.textfield,
+        color: TColor.white,
         elevation: 1,
         notchMargin: 8,
         shape: const CircularNotchedRectangle(),

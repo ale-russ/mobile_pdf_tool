@@ -21,10 +21,10 @@ class ActionButtons extends StatelessWidget {
     return Column(
       children: [
         IconButton(
-          icon: Icon(icon, color: TColor.primaryText, size: 15),
+          icon: Icon(icon, color: TColor.primaryText, size: 25),
           onPressed: onPressed,
         ),
-        Text(label, style: TextStyle(color: TColor.primaryText, fontSize: 14)),
+        // Text(label, style: TextStyle(color: TColor.primaryText, fontSize: 14)),
       ],
     );
   }

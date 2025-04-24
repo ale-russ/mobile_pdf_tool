@@ -128,6 +128,7 @@ intermediates_do_not_run/pdf_tool: runner/CMakeFiles/pdf_tool.dir/my_application
 intermediates_do_not_run/pdf_tool: runner/CMakeFiles/pdf_tool.dir/__/flutter/generated_plugin_registrant.cc.o
 intermediates_do_not_run/pdf_tool: runner/CMakeFiles/pdf_tool.dir/build.make
 intermediates_do_not_run/pdf_tool: runner/CMakeFiles/pdf_tool.dir/compiler_depend.ts
+intermediates_do_not_run/pdf_tool: plugins/file_selector_linux/libfile_selector_linux_plugin.so
 intermediates_do_not_run/pdf_tool: plugins/open_file_linux/libopen_file_linux_plugin.so
 intermediates_do_not_run/pdf_tool: plugins/url_launcher_linux/liburl_launcher_linux_plugin.so
 intermediates_do_not_run/pdf_tool: /home/user/mobile_pdf_tool/pdf_tool/linux/flutter/ephemeral/libflutter_linux_gtk.so

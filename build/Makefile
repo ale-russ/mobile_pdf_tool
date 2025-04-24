@@ -188,6 +188,19 @@ pdf_tool/fast:
 .PHONY : pdf_tool/fast
 
 #=============================================================================
+# Target rules for targets named file_selector_linux_plugin
+
+# Build rule for target.
+file_selector_linux_plugin: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 file_selector_linux_plugin
+.PHONY : file_selector_linux_plugin
+
+# fast build rule for target.
+file_selector_linux_plugin/fast:
+	$(MAKE) $(MAKESILENT) -f plugins/file_selector_linux/CMakeFiles/file_selector_linux_plugin.dir/build.make plugins/file_selector_linux/CMakeFiles/file_selector_linux_plugin.dir/build
+.PHONY : file_selector_linux_plugin/fast
+
+#=============================================================================
 # Target rules for targets named open_file_linux_plugin
 
 # Build rule for target.
@@ -226,6 +239,7 @@ help:
 	@echo "... list_install_components"
 	@echo "... rebuild_cache"
 	@echo "... flutter_assemble"
+	@echo "... file_selector_linux_plugin"
 	@echo "... open_file_linux_plugin"
 	@echo "... pdf_tool"
 	@echo "... url_launcher_linux_plugin"

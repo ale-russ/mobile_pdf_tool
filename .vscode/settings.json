@@ -1,3 +1,6 @@
 {
-    "cmake.sourceDirectory": "/home/user/mobile_pdf_tool/pdf_tool/linux"
+    "cmake.sourceDirectory": "/home/user/mobile_pdf_tool/pdf_tool/linux",
+    "cSpell.words": [
+        "Pdfs"
+    ]
 }

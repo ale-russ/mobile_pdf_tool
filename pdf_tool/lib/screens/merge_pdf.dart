@@ -4,7 +4,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
+import 'package:path/path.dart' as path;
 
 import '../providers/action_history_provider.dart';
 import '../providers/pdf_state_provider.dart';
@@ -20,6 +20,7 @@ class MergePdfScreen extends ConsumerStatefulWidget {
 
 class _MergePdfScreenState extends ConsumerState<MergePdfScreen> {
   final int maxFileSizeForFrontend = 5 * 1024 * 1024;
+
   void _mergePDFs(WidgetRef ref, BuildContext context) async {
     final pdfState = ref.watch(pdfStateProvider);
     // Placeholder for merge logic (call backend)
@@ -70,6 +71,20 @@ class _MergePdfScreenState extends ConsumerState<MergePdfScreen> {
     ).showSnackBar(SnackBar(content: Text('Merging PDFs...')));
   }
 
+  void _onReorder(int oldIndex, int newIndex, List<String> selectedPdfs) {
+    final updatedList = [...selectedPdfs];
+
+    // Adjust the new index if necessary
+    if (newIndex > oldIndex) newIndex--;
+
+    // Perform reordering
+    final item = updatedList.removeAt(oldIndex);
+    updatedList.insert(newIndex, item);
+
+    // update state using the notifier
+    ref.read(pdfStateProvider.notifier).setSelectedPdfs(updatedList);
+  }
+
   @override
   Widget build(BuildContext context) {
     final pdfState = ref.watch(pdfStateProvider);
@@ -82,41 +97,44 @@ class _MergePdfScreenState extends ConsumerState<MergePdfScreen> {
               : Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.4,
-                    child: GridView.builder(
-                      padding: const EdgeInsets.all(8.0),
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    height: MediaQuery.of(context).size.height * 0.7,
+                    child: ReorderableListView.builder(
+                      buildDefaultDragHandles: false,
+                      onReorder:
+                          (oldIndex, newIndex) =>
+                              _onReorder(oldIndex, newIndex, selectedPdfs),
                       itemCount: selectedPdfs.length,
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        mainAxisSpacing: 12,
-                        crossAxisSpacing: 12,
-                      ),
                       itemBuilder: (context, index) {
-                        final path = selectedPdfs[index];
+                        final filePath = selectedPdfs[index];
+                        final fileName = path.basename(filePath);
                         return Card(
-                          child: Column(
-                            children: [
-                              Expanded(
-                                child: SfPdfViewer.file(
-                                  File(path),
-                                  canShowScrollStatus: false,
-                                  canShowPaginationDialog: false,
-                                  pageLayoutMode: PdfPageLayoutMode.single,
-                                  pageSpacing: 0,
-                                  initialZoomLevel: 0.3,
-                                  enableTextSelection: false,
-                                ),
+                          color: TColor.primary,
+                          key: ValueKey(filePath),
+                          child: ListTile(
+                            leading: Icon(
+                              Icons.picture_as_pdf,
+                              color: TColor.white,
+                            ),
+                            title: Text(
+                              'File ${index + 1}',
+                              style: TextStyle(
+                                color: TColor.white,
+                                // fontWeight: FontWeight.w500,
                               ),
-                              Padding(
-                                padding: const EdgeInsets.all(4.0),
-                                child: Text(
-                                  'File ${index + 1}',
-                                  style: TextStyle(fontSize: 12),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
+                            ),
+                            subtitle: Text(
+                              fileName,
+                              style: TextStyle(
+                                color: TColor.white,
+                                fontWeight: FontWeight.w500,
                               ),
-                            ],
+                            ),
+                            trailing: Icon(
+                              Icons.drag_handle,
+                              color: TColor.white,
+                            ),
                           ),
                         );
                       },
@@ -134,6 +152,13 @@ class _MergePdfScreenState extends ConsumerState<MergePdfScreen> {
                       onPressed: () {
                         _mergePDFs(ref, context);
                       },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: TColor.primary,
+                        foregroundColor: TColor.white,
+                        shape: BeveledRectangleBorder(
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                      ),
                       child: Text("Merge PDF"),
                     ),
                   ),

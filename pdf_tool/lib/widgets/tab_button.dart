@@ -18,34 +18,31 @@ class TabButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      // highlightColor: Colors.transparent,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          // Image.asset(
-          //   icon,
-          //   width: 15,
-          //   height: 15,
-          //   color: isSelected ? TColor.primary : TColor.placeholder,
-          // ),
-          Icon(
-            icon,
-            size: 15,
-            color: isSelected ? TColor.primary : TColor.placeholder,
-          ),
-          const SizedBox(height: 4),
-          Text(
-            title,
-            style: TextStyle(
+    return Container(
+      // decoration: BoxDecoration(color: TColor.primary),
+      child: InkWell(
+        onTap: onTap,
+
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Icon(
+              icon,
+              size: 25,
               color: isSelected ? TColor.primary : TColor.placeholder,
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
             ),
-          ),
-        ],
+            const SizedBox(height: 4),
+            Text(
+              title,
+              style: TextStyle(
+                color: isSelected ? TColor.primary : TColor.placeholder,
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
