@@ -99,7 +99,7 @@ class _MergePdfScreenState extends ConsumerState<MergePdfScreen> {
                 children: [
                   Container(
                     padding: const EdgeInsets.all(8),
-                    height: MediaQuery.of(context).size.height * 0.7,
+                    height: MediaQuery.of(context).size.height - 300,
                     child: ReorderableListView.builder(
                       buildDefaultDragHandles: false,
                       onReorder:
