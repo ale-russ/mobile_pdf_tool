@@ -26,7 +26,7 @@ class MyApp extends ConsumerWidget {
         // brightness: isDarkMode ? Brightness.dark : Brightness.light,
         // primarySwatch: Colors.amber,
         // scaffoldBackgroundColor: isDarkMode ? Color(0xFF00030C) : Colors.white,
-        scaffoldBackgroundColor: TColor.textfield,
+        scaffoldBackgroundColor: TColor.white,
         textTheme: TextTheme(
           bodyLarge: TextStyle(color: isDarkMode ? Colors.white : Colors.black),
         ),

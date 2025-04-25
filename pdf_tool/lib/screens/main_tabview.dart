@@ -48,14 +48,14 @@ class _MainTabViewScreenState extends ConsumerState<MainTabViewScreen> {
           },
           shape: CircleBorder(),
           backgroundColor:
-              selectedTab == 2 ? TColor.primary : TColor.placeholder,
+              selectedTab == 2 ? AppColors.primaryColor : TColor.placeholder,
           child: Icon(Icons.home_rounded, size: 25, color: TColor.textfield),
         ),
       ),
       bottomNavigationBar: BottomAppBar(
         shadowColor: TColor.black,
         surfaceTintColor: TColor.textfield,
-        color: TColor.white,
+        color: AppColors.backgroundColor,
         elevation: 1,
         notchMargin: 8,
         shape: const CircularNotchedRectangle(),

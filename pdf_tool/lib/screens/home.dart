@@ -19,94 +19,92 @@ class HomeScreen extends ConsumerWidget {
     final canUndo = ref.watch(actionHistoryProvider.notifier).canUndo;
     final canRedo = ref.watch(actionHistoryProvider.notifier).canRedo;
     return Scaffold(
-      appBar: AppBar(
-        // title: Text('PDF Editor')
-        // backgroundColor: TColor.black,
-        backgroundColor: TColor.white,
-        title: Container(
-          padding: const EdgeInsets.symmetric(vertical: 16.0),
-          margin: const EdgeInsets.symmetric(vertical: 16.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              ActionButtons(
-                context: context,
-                icon: Icons.file_download,
-                label: 'Import',
-                onPressed: () async {
-                  FilePickerResult? result = await FilePicker.platform
-                      .pickFiles(
-                        type: FileType.any,
-                        allowMultiple: true,
-                        // allowedExtensions: ['pdf'],
-                      );
+      // appBar: AppBar(
+      //   backgroundColor: TColor.white,
+      //   title: Container(
+      //     padding: const EdgeInsets.symmetric(vertical: 16.0),
+      //     margin: const EdgeInsets.symmetric(vertical: 16.0),
+      //     child: Row(
+      //       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      //       children: [
+      //         ActionButtons(
+      //           context: context,
+      //           icon: Icons.file_download,
+      //           label: 'Import',
+      //           onPressed: () async {
+      //             FilePickerResult? result = await FilePicker.platform
+      //                 .pickFiles(
+      //                   type: FileType.any,
+      //                   allowMultiple: true,
+      //                   // allowedExtensions: ['pdf'],
+      //                 );
 
-                  log('Picked files: ${result?.paths}');
-                  if (result != null && result.files.isNotEmpty) {
-                    final validPaths =
-                        result.paths
-                            .whereType<String>()
-                            .where((path) => File(path).existsSync())
-                            .toList();
-                    log('Valid paths: $validPaths');
-                    if (validPaths.isNotEmpty) {
-                      List<String> paths =
-                          result.paths.whereType<String>().toList();
-                      ref.read(pdfStateProvider.notifier).setPdfPath(paths);
-                      ref.read(pdfStateProvider.notifier).state = ref
-                          .read(pdfStateProvider)
-                          .copyWith(selectedPdfs: validPaths);
+      //             log('Picked files: ${result?.paths}');
+      //             if (result != null && result.files.isNotEmpty) {
+      //               final validPaths =
+      //                   result.paths
+      //                       .whereType<String>()
+      //                       .where((path) => File(path).existsSync())
+      //                       .toList();
+      //               log('Valid paths: $validPaths');
+      //               if (validPaths.isNotEmpty) {
+      //                 List<String> paths =
+      //                     result.paths.whereType<String>().toList();
+      //                 ref.read(pdfStateProvider.notifier).setPdfPath(paths);
+      //                 ref.read(pdfStateProvider.notifier).state = ref
+      //                     .read(pdfStateProvider)
+      //                     .copyWith(selectedPdfs: validPaths);
 
-                      ref
-                          .read(actionHistoryProvider.notifier)
-                          .addAction('Imported PDF');
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text("No Valid PDFs found!")),
-                      );
-                    }
-                  }
-                },
-              ),
-              ActionButtons(
-                context: context,
-                icon: Icons.file_upload,
-                label: 'Export',
-                // onPressed: () => _exportPdf(ref, context),
-                onPressed: () {},
-              ),
-              ActionButtons(
-                context: context,
-                icon: Icons.undo,
-                label: 'Undo',
-                onPressed:
-                    canUndo
-                        ? () {
-                          ref.read(actionHistoryProvider.notifier).undo();
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('Undo action')),
-                          );
-                        }
-                        : null,
-              ),
-              ActionButtons(
-                context: context,
-                icon: Icons.redo,
-                label: 'Redo',
-                onPressed:
-                    canRedo
-                        ? () {
-                          ref.read(actionHistoryProvider.notifier).redo();
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('Redo action')),
-                          );
-                        }
-                        : null,
-              ),
-            ],
-          ),
-        ),
-      ),
+      //                 ref
+      //                     .read(actionHistoryProvider.notifier)
+      //                     .addAction('Imported PDF');
+      //               } else {
+      //                 ScaffoldMessenger.of(context).showSnackBar(
+      //                   SnackBar(content: Text("No Valid PDFs found!")),
+      //                 );
+      //               }
+      //             }
+      //           },
+      //         ),
+      //         ActionButtons(
+      //           context: context,
+      //           icon: Icons.file_upload,
+      //           label: 'Export',
+      //           // onPressed: () => _exportPdf(ref, context),
+      //           onPressed: () {},
+      //         ),
+      //         ActionButtons(
+      //           context: context,
+      //           icon: Icons.undo,
+      //           label: 'Undo',
+      //           onPressed:
+      //               canUndo
+      //                   ? () {
+      //                     ref.read(actionHistoryProvider.notifier).undo();
+      //                     ScaffoldMessenger.of(context).showSnackBar(
+      //                       SnackBar(content: Text('Undo action')),
+      //                     );
+      //                   }
+      //                   : null,
+      //         ),
+      //         ActionButtons(
+      //           context: context,
+      //           icon: Icons.redo,
+      //           label: 'Redo',
+      //           onPressed:
+      //               canRedo
+      //                   ? () {
+      //                     ref.read(actionHistoryProvider.notifier).redo();
+      //                     ScaffoldMessenger.of(context).showSnackBar(
+      //                       SnackBar(content: Text('Redo action')),
+      //                     );
+      //                   }
+      //                   : null,
+      //         ),
+      //       ],
+      //     ),
+      //   ),
+      // ),
       body: MainTabViewScreen(),
     );
   }
