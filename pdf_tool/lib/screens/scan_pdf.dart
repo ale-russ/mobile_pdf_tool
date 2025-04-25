@@ -85,25 +85,25 @@ class _ScanPDFScreenState extends ConsumerState<ScanPDFScreen> {
           //     width: double.infinity,
           //     decoration: BoxDecoration(borderRadius: BorderRadius.circular(8)),
           //     child:
-          //         (_controller != null && _initializeControllerFuture != null)
-          //             ? FutureBuilder(
-          //               future: _initializeControllerFuture,
-          //               builder: (context, snapshot) {
-          //                 if (snapshot.connectionState ==
-          //                     ConnectionState.done) {
-          //                   return CameraPreview(_controller!);
-          //                 } else if (snapshot.hasError) {
-          //                   return Center(
-          //                     child: Text("Camera Error: ${snapshot.error}"),
-          //                   );
-          //                 } else {
-          //                   return const Center(
-          //                     child: CircularProgressIndicator(),
-          //                   );
-          //                 }
-          //               },
-          //             )
-          //             : const Center(child: CircularProgressIndicator()),
+          // (_controller != null && _initializeControllerFuture != null)
+          //     ? FutureBuilder(
+          //       future: _initializeControllerFuture,
+          //       builder: (context, snapshot) {
+          //         if (snapshot.connectionState ==
+          //             ConnectionState.done) {
+          //           return CameraPreview(_controller!);
+          //         } else if (snapshot.hasError) {
+          //           return Center(
+          //             child: Text("Camera Error: ${snapshot.error}"),
+          //           );
+          //         } else {
+          //           return const Center(
+          //             child: CircularProgressIndicator(),
+          //           );
+          //         }
+          //       },
+          //     )
+          //     : const Center(child: CircularProgressIndicator()),
           //   ),
           // ),
           Card(
@@ -163,7 +163,31 @@ class _ScanPDFScreenState extends ConsumerState<ScanPDFScreen> {
           Card(
             margin: const EdgeInsets.symmetric(horizontal: 20),
             color: Colors.black,
-            child: Container(height: MediaQuery.of(context).size.height - 350),
+            child: Container(
+              height: MediaQuery.of(context).size.height - 350,
+              width: double.infinity,
+              decoration: BoxDecoration(borderRadius: BorderRadius.circular(8)),
+              child:
+                  (_controller != null && _initializeControllerFuture != null)
+                      ? FutureBuilder(
+                        future: _initializeControllerFuture,
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.done) {
+                            return CameraPreview(_controller!);
+                          } else if (snapshot.hasError) {
+                            return Center(
+                              child: Text("Camera Error: ${snapshot.error}"),
+                            );
+                          } else {
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          }
+                        },
+                      )
+                      : const Center(child: CircularProgressIndicator()),
+            ),
           ),
           SubmitButton(
             title: 'Scan Document',
