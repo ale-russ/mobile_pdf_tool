@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pdf_tool/screens/merge_pdf.dart';
-import 'package:pdf_tool/screens/pdf_editor_screen.dart';
+import 'package:pdf_tool/pages/home/merge_pdf.dart';
+import 'package:pdf_tool/pages/home/pdf_editor_screen.dart';
 
 import '../utils/app_colors.dart';
 import '../widgets/tab_button.dart';
-import 'scan_pdf.dart';
+import 'home/scan_pdf.dart';
 
 class MainTabViewScreen extends ConsumerStatefulWidget {
   const MainTabViewScreen({super.key});

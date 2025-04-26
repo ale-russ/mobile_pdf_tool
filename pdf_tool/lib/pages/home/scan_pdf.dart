@@ -6,9 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 
-import '../utils/app_colors.dart';
-import '../utils/image_utils.dart';
-import '../widgets/submit_button.dart';
+import '../../utils/app_colors.dart';
+import '../../utils/image_utils.dart';
+import '../../widgets/submit_button.dart';
 import 'recognize_screen.dart';
 
 class ScanPDFScreen extends ConsumerStatefulWidget {
@@ -69,8 +69,9 @@ class _ScanPDFScreenState extends ConsumerState<ScanPDFScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    return Container(
       height: MediaQuery.of(context).size.height,
+      margin: const EdgeInsets.symmetric(vertical: 16),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
@@ -108,11 +109,10 @@ class _ScanPDFScreenState extends ConsumerState<ScanPDFScreen> {
           // ),
           Card(
             margin: const EdgeInsets.symmetric(horizontal: 20),
-            // width: MediaQuery.of(context).size.width,
             shape: BeveledRectangleBorder(
               borderRadius: BorderRadius.circular(2),
             ),
-            color: TColor.primary,
+            color: AppColors.primaryColor,
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.spaceAround,

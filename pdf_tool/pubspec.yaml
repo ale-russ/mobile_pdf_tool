@@ -57,6 +57,7 @@ dependencies:
   # opencv_core: ^1.4.1
   pdf: ^3.11.3
   google_mlkit_text_recognition: ^0.15.0
+  shared_preferences: ^2.5.3
   
   # permission_handler_web: ^0.0.2
 

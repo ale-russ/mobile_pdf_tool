@@ -18,7 +18,7 @@ class SubmitButton extends ConsumerWidget {
       child: ElevatedButton(
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
-          backgroundColor: TColor.primary,
+          backgroundColor: AppColors.primaryColor,
           foregroundColor: TColor.white,
           shape: BeveledRectangleBorder(borderRadius: BorderRadius.circular(2)),
         ),

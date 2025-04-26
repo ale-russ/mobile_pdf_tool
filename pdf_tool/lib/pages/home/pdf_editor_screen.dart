@@ -9,13 +9,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
-import '../providers/action_history_provider.dart';
-import '../providers/pdf_state_provider.dart';
-import '../providers/theme_provider.dart';
-import '../services/pdf_services.dart';
-import '../utils/pdf_util.dart';
-import '../widgets/action_buttons.dart';
-import '../widgets/feature_buttons.dart';
+import '../../providers/action_history_provider.dart';
+import '../../providers/pdf_state_provider.dart';
+import '../../providers/theme_provider.dart';
+import '../../services/pdf_services.dart';
+import '../../utils/pdf_util.dart';
+import '../../widgets/action_buttons.dart';
+import '../../widgets/feature_buttons.dart';
 
 class PdfEditorScreen extends ConsumerWidget {
   PdfEditorScreen({super.key});

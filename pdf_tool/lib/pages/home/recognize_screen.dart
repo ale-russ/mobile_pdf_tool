@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 
-import '../utils/app_colors.dart';
+import '../../utils/app_colors.dart';
 
 // ignore: must_be_immutable
 class RecognizeScreen extends ConsumerStatefulWidget {
