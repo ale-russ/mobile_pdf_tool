@@ -30,6 +30,7 @@ class HomeScreen extends ConsumerWidget {
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: ListView(
+          physics: const NeverScrollableScrollPhysics(),
           children: [
             GridView.count(
               crossAxisCount: 2,

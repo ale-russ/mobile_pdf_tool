@@ -14,6 +14,7 @@ import '../../providers/pdf_state_provider.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/pdf_util.dart';
 import '../../widgets/add_button.dart';
+import '../../widgets/recent_files_widget.dart';
 
 class MergePdfScreen extends ConsumerStatefulWidget {
   const MergePdfScreen({super.key});
@@ -24,37 +25,6 @@ class MergePdfScreen extends ConsumerStatefulWidget {
 
 class _MergePdfScreenState extends ConsumerState<MergePdfScreen> {
   final int maxFileSizeForFrontend = 5 * 1024 * 1024;
-
-  // void _pickFiles() async {
-  //   FilePickerResult? result = await FilePicker.platform.pickFiles(
-  //     type: FileType.any,
-  //     allowMultiple: true,
-  //     // allowedExtensions: ['pdf'],
-  //   );
-
-  //   log('Picked files: ${result?.paths}');
-  //   if (result != null && result.files.isNotEmpty) {
-  //     final validPaths =
-  //         result.paths
-  //             .whereType<String>()
-  //             .where((path) => File(path).existsSync())
-  //             .toList();
-  //     log('Valid paths: $validPaths');
-  //     if (validPaths.isNotEmpty) {
-  //       List<String> paths = result.paths.whereType<String>().toList();
-  //       ref.read(pdfStateProvider.notifier).setPdfPath(paths);
-  //       ref.read(pdfStateProvider.notifier).state = ref
-  //           .read(pdfStateProvider)
-  //           .copyWith(selectedPdfs: validPaths);
-
-  //       ref.read(actionHistoryProvider.notifier).addAction('Imported PDF');
-  //     } else {
-  //       ScaffoldMessenger.of(
-  //         context,
-  //       ).showSnackBar(SnackBar(content: Text("No Valid PDFs found!")));
-  //     }
-  //   }
-  // }
 
   void _mergePDFs(WidgetRef ref, BuildContext context) async {
     final pdfState = ref.watch(pdfStateProvider);
@@ -211,15 +181,30 @@ class _MergePdfScreenState extends ConsumerState<MergePdfScreen> {
             AddButton(),
             const SizedBox(height: 16),
 
+            // DisplayRecentFiles(),
+
+            // const SizedBox(height: 16),
             // Merge Button
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed:
-                    () =>
-                        selectedPdfs.length >= 2
-                            ? _mergePDFs(ref, context)
-                            : null,
+                onPressed: () {
+                  log('selectedPDFs: ${selectedPdfs.length}');
+                  selectedPdfs.length >= 2
+                      ? _mergePDFs(ref, context)
+                      : ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          backgroundColor: AppColors.pdfIconColor,
+                          content: Text(
+                            'Please select more than 2 Files to be merged',
+                            style: TextStyle(
+                              color: TColor.white,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      );
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primaryColor,
                   foregroundColor: Colors.white,
