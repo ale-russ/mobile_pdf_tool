@@ -12,16 +12,18 @@ class TColor {
 }
 
 class AppColors {
-  //   Primary: #4A90E2 (blue)
+  // Primary: #4A90E2 (blue)
 
   // Accent: #34C759 (green)
 
-  // Background: #F9FAFB
+  // Background: #EFF4FA
 
   // Text: #1C1C1E
-  static Color get primaryColor => const Color(0Xff4A90E2);
-  static Color get accentColor => const Color(0Xff34c759);
-  static Color get backgroundColor => const Color(0xfff9fafb);
+  static Color get primaryColor => const Color(0xff4582ff);
+  static Color get white => const Color(0xffffffff);
+  static Color get accentColor => const Color(0xff34c759);
+  static Color get backgroundColor => const Color(0xFFEFF4FA);
   static Color get textColor => const Color(0xff1c1c1e);
-  // static Color get errorColor => const Colors.red;
+  static Color get borderColor => const Color(0x99E0DBDB);
+  static Color get pdfIconColor => const Color(0xFFfa615b);
 }

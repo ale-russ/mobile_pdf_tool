@@ -1,17 +1,57 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:pdf_tool/pages/home/home.dart';
+import 'package:pdf_tool/pages/home/pdf_editor_screen.dart';
 
-import 'package:pdf_tool/screens/pdf_editor_screen.dart';
-
-import '../screens/home.dart';
-import '../screens/spash_screen.dart';
+import '../pages/home/display_pdf.dart';
+import '../pages/home/merge_pdf.dart';
+import '../pages/home/scan_pdf.dart';
+import '../pages/home/success_screen.dart';
+import '../pages/settings_page.dart';
+import '../pages/splash_screen.dart';
+import '../widgets/main_scaffold.dart';
 
 final goRouterProvider = Provider<GoRouter>((ref) {
   return GoRouter(
+    initialLocation: "/",
     routes: [
+      // GoRoute(path: '/', builder: (context, state) => HomeScreen()),
       GoRoute(path: '/', builder: (context, state) => SplashScreen()),
-      GoRoute(path: '/home', builder: (context, state) => HomeScreen()),
-      GoRoute(path: '/editor', builder: (context, state) => PdfEditorScreen()),
+      ShellRoute(
+        builder: (context, state, child) => MainScaffold(child: child),
+        routes: [
+          GoRoute(
+            path: '/home',
+            builder: (context, state) => HomeScreen(),
+            routes: [
+              GoRoute(
+                path: '/editor',
+                builder: (context, state) => PdfEditorScreen(),
+              ),
+              GoRoute(
+                path: '/merge-pdf',
+                builder: (context, state) => MergePdfScreen(),
+              ),
+              GoRoute(
+                path: '/scan-document',
+                builder: (context, state) => ScanPDFScreen(),
+              ),
+              GoRoute(
+                path: '/success',
+                builder: (context, state) => SuccessScreen(),
+              ),
+            ],
+          ),
+          GoRoute(
+            path: '/display-pdf',
+            builder: (context, state) => DisplayPDFScreen(),
+          ),
+          GoRoute(
+            path: '/settings',
+            builder: (context, state) => SettingsPage(),
+          ),
+        ],
+      ),
     ],
   );
 });
