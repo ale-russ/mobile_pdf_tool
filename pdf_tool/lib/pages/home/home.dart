@@ -1,10 +1,8 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../utils/app_colors.dart';
 import '../../widgets/recent_files_widget.dart';
 
 class HomeScreen extends ConsumerWidget {
@@ -13,7 +11,8 @@ class HomeScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF9FAFB),
+      // backgroundColor: const Color(0xFFF9FAFB),
+      backgroundColor: const Color(0xffFAFAFA),
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0.5,
@@ -32,36 +31,80 @@ class HomeScreen extends ConsumerWidget {
         child: ListView(
           physics: const NeverScrollableScrollPhysics(),
           children: [
-            GridView.count(
-              crossAxisCount: 2,
-              crossAxisSpacing: 12,
-              mainAxisSpacing: 12,
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 _buildActionCard(
                   context,
-                  icon: Icons.file_open_outlined,
-                  label: 'Create PDF',
+                  icon: 'assets/img/scan_pdf.svg',
+                  label: 'Scan PDF',
+                  onTap: () => context.push("/home/scan-document"),
+                  color: Color(0xffFFF7EB),
+                  iconColor: Color(0xffFDAA31),
+                ),
+                _buildActionCard(
+                  context,
+                  icon: 'assets/img/watermark_pdf.svg',
+                  label: 'Watermark PDF',
                   onTap: () {},
+                  color: Color(0xffF8F2F1),
+                  iconColor: Color(0xffFDAA31),
                 ),
                 _buildActionCard(
                   context,
-                  icon: Icons.merge_type,
-                  label: 'Merge PDFs',
-                  onTap: () => context.push('/home/merge-pdf'),
+                  icon: 'assets/img/e-scan_pdf.svg',
+                  label: 'E-Sign PDF',
+                  onTap: () {},
+                  color: Color(0xffFFF1F1),
+                  iconColor: Color(0xffFDAA31),
                 ),
                 _buildActionCard(
                   context,
-                  icon: Icons.account_tree_outlined,
+                  icon: 'assets/img/split_pdf.svg',
                   label: 'Split PDF',
-                  onTap: () {},
+                  onTap: () => context.push('/home/split-pdf'),
+                  color: Color(0xffFFF1F1),
+                  iconColor: Color(0xffFDAA31),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _buildActionCard(
+                  context,
+                  icon: 'assets/img/merge_pdf.svg',
+                  label: 'Merge PDF',
+                  onTap: () => context.push('/home/merge-pdf'),
+                  color: Color(0xffFFF1F1),
+                  iconColor: Color(0xffF83A3C),
                 ),
                 _buildActionCard(
                   context,
-                  icon: Icons.camera_alt,
-                  label: 'Scan Document',
-                  onTap: () => context.push('/home/scan-document'),
+                  icon: 'assets/img/protect_pdf.svg',
+                  label: 'Protect PDF',
+                  onTap: () {},
+                  color: Color(0xffEBF7F6),
+                  iconColor: Color(0xff40DAA4),
+                ),
+                _buildActionCard(
+                  context,
+                  icon: 'assets/img/compress_pdf.svg',
+                  label: 'Compress PDF',
+                  onTap: () {},
+                  color: Color(0xffFFF7EB),
+                  iconColor: Color(0xffFDA82F),
+                ),
+                _buildActionCard(
+                  context,
+                  icon: 'assets/img/all_tools.svg',
+                  label: 'All Tools',
+                  onTap: () {},
+                  color: Color(0xffF0F5FC),
+                  iconColor: Color(0xff5571FF),
                 ),
               ],
             ),
@@ -77,53 +120,48 @@ class HomeScreen extends ConsumerWidget {
   // Quick Action Card
   Widget _buildActionCard(
     BuildContext context, {
-    required IconData icon,
+    required String icon,
     required String label,
     required VoidCallback onTap,
+    required Color color,
+    required Color iconColor,
   }) {
     return GestureDetector(
       onTap: onTap,
-      child: Container(
-        decoration: BoxDecoration(
-          color: AppColors.white,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: const [
-            BoxShadow(
-              color: Color(0x1A000000),
-              blurRadius: 6,
-              offset: Offset(0, 3),
-            ),
-          ],
-        ),
-        padding: const EdgeInsets.all(16),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          // Icon(icon, size: 20, color: iconColor),
+          Container(
+            width: 45,
+            height: 45,
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: color,
+              shape: BoxShape.circle,
 
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, size: 32, color: AppColors.primaryColor),
-            const SizedBox(height: 12),
-            Text(
-              label,
-              style: const TextStyle(
-                fontWeight: FontWeight.w500,
-                color: Color(0xFF374151),
-              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Color(0x1a000000),
+                  blurRadius: 6,
+                  offset: Offset(0, 3),
+                ),
+              ],
             ),
-          ],
-        ),
+            child: SvgPicture.asset(icon, width: 18, height: 18),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            label,
+            style: const TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+              color: Color(0xFF374151),
+            ),
+          ),
+        ],
       ),
-    );
-  }
-
-  // Recent File Tile
-  Widget _buildRecentFileTile(String fileName, String date) {
-    return ListTile(
-      contentPadding: const EdgeInsets.symmetric(horizontal: 0, vertical: 4),
-      leading: Icon(Icons.insert_drive_file, color: AppColors.pdfIconColor),
-      title: Text(fileName),
-      subtitle: Text(date),
-      trailing: Icon(Icons.circle_outlined, size: 20, color: Colors.grey),
-      onTap: () {},
     );
   }
 }

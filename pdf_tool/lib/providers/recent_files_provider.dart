@@ -5,5 +5,5 @@ import '../utils/recent_file_storage.dart';
 
 final recentFilesProvider = FutureProvider<List<RecentFile>>((ref) async {
   final storage = RecentFileStorage();
-  return storage.getRecentFiles();
+  return await storage.getRecentFiles();
 });

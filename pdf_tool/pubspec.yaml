@@ -58,6 +58,8 @@ dependencies:
   pdf: ^3.11.3
   google_mlkit_text_recognition: ^0.15.0
   shared_preferences: ^2.5.3
+  font_awesome_flutter: ^10.8.0
+  flutter_svg: ^2.1.0
   
   # permission_handler_web: ^0.0.2
 

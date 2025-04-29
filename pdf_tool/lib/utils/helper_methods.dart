@@ -1,9 +1,12 @@
 import 'dart:developer';
 import 'dart:io';
+import 'dart:ui';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image/image.dart' as img;
 import 'package:path_provider/path_provider.dart';
+// import 'package:pdf/pdf.dart';
+import 'package:syncfusion_flutter_pdf/pdf.dart';
 
 import 'package:permission_handler/permission_handler.dart';
 
@@ -96,5 +99,37 @@ class HelperMethods {
     // In a real app, use Hough transform or a library like OpenCV for accurate deskew
     // This is a placeholder returning a small rotation angle
     return 0.5; // Rotate by 0.5 degrees (adjust based on actual detection)
+  }
+
+  Future<void> addWatermarkToPdf(File inputPdfFile) async {
+    // Load existing PDF document
+    final List<int> bytes = await inputPdfFile.readAsBytes();
+    final PdfDocument document = PdfDocument(inputBytes: bytes);
+
+    // Loop through pages and add watermark
+    for (int i = 0; i < document.pages.count; i++) {
+      final page = document.pages[i];
+      page.graphics.drawString(
+        'CONFIDENTIAL',
+        PdfStandardFont(PdfFontFamily.helvetica, 36),
+        brush: PdfSolidBrush(PdfColor(255, 0, 0, 50)),
+        bounds: Rect.fromLTWH(0, 100, page.getClientSize().width, 100),
+        format: PdfStringFormat(
+          alignment: PdfTextAlignment.center,
+          lineAlignment: PdfVerticalAlignment.middle,
+        ),
+      );
+    }
+
+    // Save to a new file
+    final outputDir = await getTemporaryDirectory();
+    final outputFile = File('${outputDir.path}/watermarked_output.pdf');
+    // await outputFile.writeAsBytes(document.save());
+    final List<int> newBytes = await document.save();
+    await outputFile.writeAsBytes(newBytes);
+
+    document.dispose();
+
+    // Now you can open, preview, or share `outputFile`
   }
 }
