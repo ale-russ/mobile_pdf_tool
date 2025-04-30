@@ -1,12 +1,11 @@
 import 'dart:developer';
 import 'dart:io';
-import 'dart:ui';
+import 'dart:typed_data';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image/image.dart' as img;
+import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
-// import 'package:pdf/pdf.dart';
-import 'package:syncfusion_flutter_pdf/pdf.dart';
 
 import 'package:permission_handler/permission_handler.dart';
 
@@ -55,7 +54,7 @@ class HelperMethods {
     return totalSize <= maxFileSizeForFrontend;
   }
 
-  Future<bool> requestCameraPermission() async {
+  static Future<bool> requestCameraPermission() async {
     var status = await Permission.camera.status;
     if (!status.isGranted) {
       status = await Permission.camera.request();
@@ -101,35 +100,33 @@ class HelperMethods {
     return 0.5; // Rotate by 0.5 degrees (adjust based on actual detection)
   }
 
-  Future<void> addWatermarkToPdf(File inputPdfFile) async {
-    // Load existing PDF document
-    final List<int> bytes = await inputPdfFile.readAsBytes();
-    final PdfDocument document = PdfDocument(inputBytes: bytes);
+  //save a single File
+  static Future<String> saveFile(Uint8List bytes, String fileName) async {
+    final Directory directory = await getApplicationDocumentsDirectory();
+    final String path = '${directory.path}/$fileName.pdf';
+    final File file = File(path);
+    await file.writeAsBytes(bytes, flush: true);
+    return path;
+  }
 
-    // Loop through pages and add watermark
-    for (int i = 0; i < document.pages.count; i++) {
-      final page = document.pages[i];
-      page.graphics.drawString(
-        'CONFIDENTIAL',
-        PdfStandardFont(PdfFontFamily.helvetica, 36),
-        brush: PdfSolidBrush(PdfColor(255, 0, 0, 50)),
-        bounds: Rect.fromLTWH(0, 100, page.getClientSize().width, 100),
-        format: PdfStringFormat(
-          alignment: PdfTextAlignment.center,
-          lineAlignment: PdfVerticalAlignment.middle,
-        ),
+  // Save multiple PDF files (for splitting)
+  static Future<List<String>> saveMultipleFiles(
+    List<Uint8List> fileBytes,
+    String baseName,
+  ) async {
+    final List<String> paths = [];
+    for (int i = 0; i < fileBytes.length; i++) {
+      final String path = await saveFile(
+        fileBytes[i],
+        '${baseName}_${i + 1}.pdf',
       );
+      paths.add(path);
     }
+    return paths;
+  }
 
-    // Save to a new file
-    final outputDir = await getTemporaryDirectory();
-    final outputFile = File('${outputDir.path}/watermarked_output.pdf');
-    // await outputFile.writeAsBytes(document.save());
-    final List<int> newBytes = await document.save();
-    await outputFile.writeAsBytes(newBytes);
-
-    document.dispose();
-
-    // Now you can open, preview, or share `outputFile`
+  // open a file
+  static Future<void> openFile(String path) async {
+    await OpenFile.open(path);
   }
 }

@@ -1,46 +1,11 @@
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:image/image.dart' as img;
-import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
 import 'dart:ui';
 
 class PdfUtil {
-  // Merge multiple PDFs into a single PDF file
-  // static Future<Uint8List> mergePDFs(List<String> pdfPaths) async {
-  //   final PdfDocument mergedDocument = PdfDocument();
-
-  //   for (String path in pdfPaths) {
-  //     final PdfDocument loadedDocument = PdfDocument(
-  //       inputBytes: File(path).readAsBytesSync(),
-  //     );
-
-  //     // Import all pages from the loaded document
-  //     mergedDocument.pages.add().graphics.drawPdfTemplate(
-  //       loadedDocument.pages[0].createTemplate(),
-  //       const Offset(0, 0),
-  //     );
-
-  //     for (int i = 0; i < loadedDocument.pages.count; i++) {
-  //       final page = mergedDocument.pages.add();
-  //       page.graphics.drawPdfTemplate(
-  //         loadedDocument.pages[i].createTemplate(),
-  //         const Offset(0, 0),
-  //       );
-  //       // final PdfTemplate template = loadedDocument.pages[i].createTemplate();
-  //       // mergedDocument.pages[mergedDocument.pages.count - 1].graphics
-  //       //     .drawPdfTemplate(template, const Offset(0, 0));
-  //     }
-
-  //     loadedDocument.dispose();
-  //   }
-
-  //   // final Uint8List bytes = Uint8List.fromList(await mergedDocument.save());
-  //   // mergedDocument.dispose();
-  //   return mergedDocument.save();
-  // }
-
   static Future<Uint8List> mergePDFs(List<String> pdfPaths) async {
     final PdfDocument outputDocument = PdfDocument();
 
@@ -162,8 +127,9 @@ class PdfUtil {
     final img.Image? image = img.decodeImage(
       await File(imagePath).readAsBytes(),
     );
-    if (image == null)
+    if (image == null) {
       throw Exception('Falied to decode image for PDF Conversion');
+    }
 
     // convert image to bytes for PDF
     final Uint8List imageBytes = Uint8List.fromList(img.encodeJpg(image));
@@ -185,35 +151,5 @@ class PdfUtil {
     await File(pdfPath).writeAsBytes(await document.save());
     document.dispose();
     return pdfPath;
-  }
-
-  //save a single File
-  static Future<String> saveFile(Uint8List bytes, String fileName) async {
-    final Directory directory = await getApplicationDocumentsDirectory();
-    final String path = '${directory.path}/$fileName.pdf';
-    final File file = File(path);
-    await file.writeAsBytes(bytes, flush: true);
-    return path;
-  }
-
-  // Save multiple PDF files (for splitting)
-  static Future<List<String>> saveMultipleFiles(
-    List<Uint8List> fileBytes,
-    String baseName,
-  ) async {
-    final List<String> paths = [];
-    for (int i = 0; i < fileBytes.length; i++) {
-      final String path = await saveFile(
-        fileBytes[i],
-        '${baseName}_${i + 1}.pdf',
-      );
-      paths.add(path);
-    }
-    return paths;
-  }
-
-  // open a file
-  static Future<void> openFile(String path) async {
-    await OpenFile.open(path);
   }
 }

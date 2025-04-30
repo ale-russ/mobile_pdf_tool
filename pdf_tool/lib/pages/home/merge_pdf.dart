@@ -14,7 +14,7 @@ import '../../providers/pdf_state_provider.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/pdf_util.dart';
 import '../../widgets/add_button.dart';
-import '../../widgets/recent_files_widget.dart';
+import '../../utils/helper_methods.dart';
 
 class MergePdfScreen extends ConsumerStatefulWidget {
   const MergePdfScreen({super.key});
@@ -49,7 +49,7 @@ class _MergePdfScreenState extends ConsumerState<MergePdfScreen> {
       if (totalSize <= maxFileSizeForFrontend) {
         // Process on frontend
         final Uint8List mergedBytes = await PdfUtil.mergePDFs(pdfPaths);
-        final String savedPath = await PdfUtil.saveFile(
+        final String savedPath = await HelperMethods.saveFile(
           mergedBytes,
           'merged_pdf.pdf',
         );

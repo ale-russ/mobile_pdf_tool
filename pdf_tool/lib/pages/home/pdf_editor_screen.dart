@@ -3,19 +3,16 @@
 import 'dart:developer';
 import 'dart:io';
 import 'dart:typed_data';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
+import '../../utils/helper_methods.dart';
 import '../../providers/action_history_provider.dart';
 import '../../providers/pdf_state_provider.dart';
-import '../../providers/theme_provider.dart';
 import '../../services/pdf_services.dart';
 import '../../utils/pdf_util.dart';
-import '../../widgets/action_buttons.dart';
-import '../../widgets/feature_buttons.dart';
 
 class PdfEditorScreen extends ConsumerWidget {
   PdfEditorScreen({super.key});
@@ -47,7 +44,7 @@ class PdfEditorScreen extends ConsumerWidget {
       if (totalSize <= maxFileSizeForFrontend) {
         // Process on frontend
         final Uint8List mergedBytes = await PdfUtil.mergePDFs(pdfPaths);
-        final String savedPath = await PdfUtil.saveFile(
+        final String savedPath = await HelperMethods.saveFile(
           mergedBytes,
           'merged_pdf.pdf',
         );
@@ -59,7 +56,7 @@ class PdfEditorScreen extends ConsumerWidget {
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text('PDFs merged Successfully')));
-        await PdfUtil.openFile(savedPath);
+        await HelperMethods.openFile(savedPath);
       } else {
         log("PDF file too big");
         return;
@@ -234,7 +231,10 @@ class PdfEditorScreen extends ConsumerWidget {
                     _splitPointsController.text.trim(),
                   );
                   final List<String> savedPaths =
-                      await PdfUtil.saveMultipleFiles(splitBytes, 'split');
+                      await HelperMethods.saveMultipleFiles(
+                        splitBytes,
+                        'split',
+                      );
                   ref
                       .read(actionHistoryProvider.notifier)
                       .addAction('Split PDFs (Frontend)');
@@ -254,7 +254,7 @@ class PdfEditorScreen extends ConsumerWidget {
                         ),
                       ),
                     );
-                    await PdfUtil.openFile(savedPaths.first);
+                    await HelperMethods.openFile(savedPaths.first);
                     context.pop();
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(

@@ -1,18 +1,18 @@
 import 'dart:io';
-import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
+import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import 'edit_scan_pdf.dart';
 
-class ScanPDFScreen extends StatefulWidget {
-  const ScanPDFScreen({super.key});
+class ScanDocumentPage extends StatefulWidget {
+  const ScanDocumentPage({super.key});
 
   @override
-  State<ScanPDFScreen> createState() => _ScanPDFScreenState();
+  State<ScanDocumentPage> createState() => _ScanDocumentPageState();
 }
 
-class _ScanPDFScreenState extends State<ScanPDFScreen> {
+class _ScanDocumentPageState extends State<ScanDocumentPage> {
   CameraController? _controller;
   List<CameraDescription> _cameras = [];
   String _selectedMode = 'Book'; // Default scan mode
