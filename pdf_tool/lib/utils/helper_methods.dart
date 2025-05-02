@@ -9,6 +9,7 @@ import 'package:path_provider/path_provider.dart';
 
 import 'package:permission_handler/permission_handler.dart';
 
+import '../notifiers/pdf_state_notifier.dart';
 import '../providers/action_history_provider.dart';
 import '../providers/pdf_state_provider.dart';
 import 'recent_file_storage.dart';
@@ -40,10 +41,41 @@ class HelperMethods {
 
         ref.read(actionHistoryProvider.notifier).addAction('Imported PDF');
       } else {
-        // ScaffoldMessenger.of(
-        //   context,
-        // ).showSnackBar(SnackBar(content: Text("No Valid PDFs found!")));
         log('No Valid PDF Found');
+      }
+    }
+  }
+
+  static Future<void> filePicker({
+    required WidgetRef ref,
+    required PdfStateNotifier notifier,
+    bool allowMultiple = true,
+  }) async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.any,
+      allowMultiple: allowMultiple,
+      // allowedExtensions: ['pdf'],
+    );
+
+    if (result != null && result.files.isNotEmpty) {
+      final validPaths =
+          result.paths
+              .whereType<String>()
+              .where((path) => File(path).existsSync())
+              .toList();
+
+      if (validPaths.isNotEmpty) {
+        notifier.setPdfPath(validPaths);
+        notifier.state = notifier.state.copyWith(
+          selectedPdfs: validPaths.toSet(),
+        );
+
+        final recentFileStorage = RecentFileStorage();
+        await recentFileStorage.addFile(validPaths.first);
+
+        ref.read(actionHistoryProvider.notifier).addAction('Imported PDF');
+      } else {
+        log('No valid PDFs found');
       }
     }
   }
