@@ -6,6 +6,7 @@ import 'package:pdf_tool/pages/home/pdf_editor_screen.dart';
 import '../pages/home/display_pdf.dart';
 import '../pages/home/merge_pdf.dart';
 import '../pages/home/scan_pdf.dart';
+import '../pages/home/split_pdf_screen.dart';
 import '../pages/home/success_screen.dart';
 import '../pages/settings_page.dart';
 import '../pages/splash_screen.dart';
@@ -31,6 +32,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: '/merge-pdf',
                 builder: (context, state) => MergePdfScreen(),
+              ),
+              GoRoute(
+                path: '/split-pdf',
+                builder: (context, state) => SplitPdfScreen(),
               ),
               GoRoute(
                 path: '/scan-document',

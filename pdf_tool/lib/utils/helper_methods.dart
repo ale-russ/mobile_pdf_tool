@@ -27,7 +27,7 @@ class HelperMethods {
           result.paths
               .whereType<String>()
               .where((path) => File(path).existsSync())
-              .toList();
+              .toSet();
       log('Valid paths: $validPaths');
       if (validPaths.isNotEmpty) {
         List<String> paths = result.paths.whereType<String>().toList();
@@ -102,11 +102,32 @@ class HelperMethods {
 
   //save a single File
   static Future<String> saveFile(Uint8List bytes, String fileName) async {
-    final Directory directory = await getApplicationDocumentsDirectory();
-    final String path = '${directory.path}/$fileName.pdf';
-    final File file = File(path);
-    await file.writeAsBytes(bytes, flush: true);
-    return path;
+    if (Platform.isAndroid) {
+      final status = await Permission.storage.request();
+      if (!status.isGranted) {
+        throw Exception('Storage permission denied');
+      }
+
+      // Get the public Downloads or Documents directory
+      final Directory directory = Directory('/storage/emulated/0/Documents');
+
+      if (await directory.exists()) {
+        await directory.create(recursive: true);
+      }
+
+      final String path = '${directory.path}/$fileName.pdf';
+      final File file = File(path);
+      await file.writeAsBytes(bytes, flush: true);
+      return path;
+    } else if (Platform.isIOS) {
+      final Directory directory = await getApplicationDocumentsDirectory();
+      final String path = '${directory.path}/$fileName.pdf';
+      final File file = File(path);
+      await file.writeAsBytes(bytes, flush: true);
+      return path;
+    } else {
+      throw UnsupportedError('Unsupported Platform');
+    }
   }
 
   // Save multiple PDF files (for splitting)
@@ -122,6 +143,7 @@ class HelperMethods {
       );
       paths.add(path);
     }
+    log('Saved File path: $paths');
     return paths;
   }
 

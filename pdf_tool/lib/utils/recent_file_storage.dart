@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/recent_files_model.dart';
@@ -9,16 +10,23 @@ class RecentFileStorage {
   Future<List<RecentFile>> getRecentFiles() async {
     final prefs = await SharedPreferences.getInstance();
     final jsonList = prefs.getStringList(_key) ?? [];
-    return jsonList
-        .map((e) => RecentFile.fromJson(json.decode(e)))
-        .toList()
-        .take(3)
-        .toList();
+    log('jsonList: $jsonList');
+    final result =
+        jsonList
+            .map((e) => RecentFile.fromJson(json.decode(e)))
+            .toList()
+            .take(3)
+            .toList();
+
+    log('Result in getRecentFiles: $result');
+
+    return result;
   }
 
   Future<void> addFile(String filePath) async {
     final prefs = await SharedPreferences.getInstance();
     final current = await getRecentFiles();
+    log('current: ${current.length}');
 
     // Remove if it already exists
     final updated = current.where((f) => f.path != filePath).toList();

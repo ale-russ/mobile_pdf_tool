@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../utils/app_colors.dart';
+
 class SuccessScreen extends StatelessWidget {
   const SuccessScreen({super.key});
 
@@ -83,7 +85,6 @@ class SuccessScreen extends StatelessWidget {
 
                 const SizedBox(height: 36),
 
-                // 🔁 Go Back Home Button
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
@@ -91,7 +92,7 @@ class SuccessScreen extends StatelessWidget {
                       Navigator.of(context).popUntil((route) => route.isFirst);
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red.shade600,
+                      backgroundColor: AppColors.primaryColor,
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(

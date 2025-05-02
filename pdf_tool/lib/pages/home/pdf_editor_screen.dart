@@ -24,7 +24,7 @@ class PdfEditorScreen extends ConsumerWidget {
   void _mergePDFs(WidgetRef ref, BuildContext context) async {
     final pdfState = ref.watch(pdfStateProvider);
     // Placeholder for merge logic (call backend)
-    final List<String> pdfPaths = pdfState.selectedPdfs;
+    final List<String> pdfPaths = pdfState.selectedPdfs.toList();
     if (pdfPaths.length < 2) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Please select at least 2 PDFs to Merge")),
@@ -245,7 +245,7 @@ class PdfEditorScreen extends ConsumerWidget {
                     // update the selectedPDFs to only include the split files
                     ref.read(pdfStateProvider.notifier).state = ref
                         .read(pdfStateProvider)
-                        .copyWith(selectedPdfs: savedPaths);
+                        .copyWith(selectedPdfs: savedPaths.toSet());
 
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(

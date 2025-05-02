@@ -10,11 +10,11 @@ class PdfStateNotifier extends StateNotifier<PdfState> {
   }
 
   void setSelectedPdfs(List<String> selectedPdfs) {
-    state = state.copyWith(selectedPdfs: selectedPdfs);
+    state = state.copyWith(selectedPdfs: selectedPdfs.toSet());
   }
 
   void clearSelectedPdfs() {
-    state = state.copyWith(selectedPdfs: []);
+    state = state.copyWith(selectedPdfs: {});
   }
 
   void setPageInfo(int currentPage, int totalPages) {

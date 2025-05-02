@@ -153,7 +153,7 @@ class _EditScanPageState extends ConsumerState<EditScanPage> {
       ref.read(pdfStateProvider.notifier).setPdfPath([finalPdfPath]);
       ref.read(pdfStateProvider.notifier).state = ref
           .read(pdfStateProvider)
-          .copyWith(selectedPdfs: [finalPdfPath]);
+          .copyWith(selectedPdfs: {finalPdfPath});
       ref.read(actionHistoryProvider.notifier).addAction('Scanned Document');
 
       // Navigate back to PdfEditorScreen
