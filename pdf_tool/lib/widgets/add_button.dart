@@ -5,7 +5,8 @@ import '../utils/app_colors.dart';
 import '../utils/helper_methods.dart';
 
 class AddButton extends ConsumerWidget {
-  const AddButton({super.key});
+  const AddButton({super.key, this.notifier});
+  final notifier;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

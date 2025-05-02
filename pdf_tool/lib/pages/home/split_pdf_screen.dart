@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
-import '../../providers/pdf_splilt_provider.dart';
+import '../../providers/pdf_provider.dart';
 import '../../providers/pdf_state_provider.dart';
 import '../../widgets/add_button.dart';
 
@@ -21,6 +21,7 @@ class _SplitPdfScreenState extends ConsumerState<SplitPdfScreen> {
   @override
   Widget build(BuildContext context) {
     final pdfState = ref.watch(pdfSplitProvider);
+    final notifier = ref.read(pdfSplitProvider.notifier);
 
     return SafeArea(
       child: Column(
@@ -60,7 +61,10 @@ class _SplitPdfScreenState extends ConsumerState<SplitPdfScreen> {
             ),
           ),
 
-          Padding(padding: const EdgeInsets.all(16), child: AddButton()),
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: AddButton(notifier: notifier),
+          ),
         ],
       ),
     );

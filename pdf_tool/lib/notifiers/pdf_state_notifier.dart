@@ -21,3 +21,10 @@ class PdfStateNotifier extends StateNotifier<PdfState> {
     state = state.copyWith(currentPage: currentPage, totalPages: totalPages);
   }
 }
+
+// Extend for specific use cases
+class PdfReaderNotifier extends PdfStateNotifier {}
+
+class PdfSplitNotifier extends PdfStateNotifier {}
+
+class PdfMergeNotifier extends PdfStateNotifier {}
