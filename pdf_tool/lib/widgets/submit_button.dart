@@ -4,25 +4,43 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../utils/app_colors.dart';
 
 class SubmitButton extends ConsumerWidget {
-  const SubmitButton({super.key, required this.title, required this.onPressed});
+  const SubmitButton({
+    super.key,
+    required this.title,
+    required this.onPressed,
+    this.isLoading = false,
+  });
 
   final String title;
   final VoidCallback onPressed;
+  final bool isLoading;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Container(
-      height: 40,
       width: double.infinity,
-      margin: const EdgeInsets.only(bottom: 40, right: 20, left: 20),
+      // padding: const EdgeInsets.only(right: 20, left: 20),
       child: ElevatedButton(
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.primaryColor,
-          foregroundColor: TColor.white,
-          shape: BeveledRectangleBorder(borderRadius: BorderRadius.circular(2)),
+          foregroundColor: Colors.white,
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
         ),
-        child: Text(title),
+        child:
+            isLoading
+                ? SizedBox(
+                  height: 20,
+                  width: 20,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: AppColors.white,
+                  ),
+                )
+                : Text(title),
       ),
     );
   }

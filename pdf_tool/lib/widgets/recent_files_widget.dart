@@ -31,7 +31,7 @@ class DisplayRecentFiles extends ConsumerWidget {
                   ),
                   const SizedBox(height: 8),
                   SizedBox(
-                    height: 300,
+                    // height: 300,
                     child: ListView.builder(
                       itemCount: files.length,
                       shrinkWrap: true,

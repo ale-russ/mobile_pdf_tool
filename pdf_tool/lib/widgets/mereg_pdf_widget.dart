@@ -12,6 +12,7 @@ import '../providers/pdf_state_provider.dart';
 import '../utils/app_colors.dart';
 import '../utils/helper_methods.dart';
 import '../utils/pdf_util.dart';
+import 'submit_button.dart';
 
 class MergePdfWidget extends ConsumerStatefulWidget {
   const MergePdfWidget({super.key});
@@ -44,9 +45,10 @@ class _MergePdfWidgetState extends ConsumerState<MergePdfWidget> {
     )).reduce((a, b) => a + b);
 
     try {
-      ref.read(pdfStateProvider.notifier).state = ref
-          .read(pdfStateProvider)
-          .copyWith(pdfPaths: []);
+      // ref.read(pdfStateProvider.notifier).state = ref
+      //     .read(pdfStateProvider)
+      //     .copyWith(pdfPaths: []);
+      ref.read(pdfStateProvider.notifier).clearPdfPaths();
       if (totalSize <= maxFileSizeForFrontend) {
         final Uint8List mergedBytes = await PdfUtil.mergePDFs(pdfPaths);
         final String savedPath = await HelperMethods.saveFile(
@@ -158,46 +160,26 @@ class _MergePdfWidgetState extends ConsumerState<MergePdfWidget> {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        log('selectedPDFs: ${selectedPdfs.length}');
-                        selectedPdfs.length >= 2
-                            ? _mergePDFs(ref, context)
-                            : ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                backgroundColor: AppColors.pdfIconColor,
-                                content: Text(
-                                  'Please select more than 2 Files to be merged',
-                                  style: TextStyle(
-                                    color: TColor.white,
-                                    fontWeight: FontWeight.w600,
-                                  ),
+                  SubmitButton(
+                    title: 'Merge PDF',
+                    onPressed: () {
+                      log('selectedPDFs: ${selectedPdfs.length}');
+                      selectedPdfs.length >= 2
+                          ? _mergePDFs(ref, context)
+                          : ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              backgroundColor: AppColors.pdfIconColor,
+                              content: Text(
+                                'Please select more than 2 Files to be merged',
+                                style: TextStyle(
+                                  color: TColor.white,
+                                  fontWeight: FontWeight.w600,
                                 ),
                               ),
-                            );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primaryColor,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      child:
-                          isLoading
-                              ? SizedBox(
-                                height: 20,
-                                width: 20,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  color: AppColors.white,
-                                ),
-                              )
-                              : const Text('Merge PDFs'),
-                    ),
+                            ),
+                          );
+                    },
+                    isLoading: isLoading,
                   ),
                 ],
               ),

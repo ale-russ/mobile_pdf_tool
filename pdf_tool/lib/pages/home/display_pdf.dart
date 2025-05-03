@@ -27,7 +27,7 @@ class DisplayPDFScreen extends ConsumerWidget {
             child: SizedBox(
               height: MediaQuery.of(context).size.height,
               child:
-                  pdfState.pdfPaths == null
+                  (pdfState.pdfPaths != null && pdfState.pdfPaths!.isNotEmpty)
                       ? Center(
                         child: Text(
                           'No PDF loaded',

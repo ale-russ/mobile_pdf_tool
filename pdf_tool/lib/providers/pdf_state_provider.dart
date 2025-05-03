@@ -9,34 +9,14 @@ final pdfStateProvider = StateNotifierProvider<PdfStateNotifier, PdfState>((
   return PdfStateNotifier();
 });
 
-class PdfState {
-  final List<String>? pdfPaths;
-  final int currentPage;
-  final int totalPages;
-  final Set<String> selectedPdfs;
-  final String? splitPdfPath;
+final pdfReaderProvider = StateNotifierProvider<PdfReaderNotifier, PdfState>(
+  (ref) => PdfReaderNotifier(),
+);
 
-  PdfState({
-    this.pdfPaths,
-    this.currentPage = 1,
-    this.totalPages = 1,
-    this.selectedPdfs = const <String>{},
-    this.splitPdfPath = '',
-  });
+final pdfSplitProvider = StateNotifierProvider<PdfSplitNotifier, PdfState>(
+  (ref) => PdfSplitNotifier(),
+);
 
-  PdfState copyWith({
-    List<String>? pdfPaths,
-    int? currentPage,
-    int? totalPages,
-    Set<String>? selectedPdfs,
-    String? splitPdfPath,
-  }) {
-    return PdfState(
-      pdfPaths: pdfPaths ?? this.pdfPaths,
-      currentPage: currentPage ?? this.currentPage,
-      totalPages: totalPages ?? this.totalPages,
-      selectedPdfs: selectedPdfs ?? this.selectedPdfs,
-      splitPdfPath: splitPdfPath ?? this.splitPdfPath,
-    );
-  }
-}
+final pdfMergeProvider = StateNotifierProvider<PdfMergeNotifier, PdfState>(
+  (ref) => PdfMergeNotifier(),
+);

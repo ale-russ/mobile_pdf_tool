@@ -3,7 +3,6 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:image/image.dart' as img;
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -33,9 +32,10 @@ class HelperMethods {
       if (validPaths.isNotEmpty) {
         List<String> paths = result.paths.whereType<String>().toList();
         ref.read(pdfStateProvider.notifier).setPdfPath(paths);
-        ref.read(pdfStateProvider.notifier).state = ref
-            .read(pdfStateProvider)
-            .copyWith(selectedPdfs: validPaths);
+        // ref.read(pdfStateProvider.notifier).state = ref
+        //     .read(pdfStateProvider)
+        //     .copyWith(selectedPdfs: validPaths);
+        ref.read(pdfStateProvider.notifier).updateSelectedPdfs(validPaths);
         final recentFileStorage = RecentFileStorage();
         await recentFileStorage.addFile(validPaths.first);
 
@@ -66,9 +66,10 @@ class HelperMethods {
 
       if (validPaths.isNotEmpty) {
         notifier.setPdfPath(validPaths);
-        notifier.state = notifier.state.copyWith(
-          selectedPdfs: validPaths.toSet(),
-        );
+        // notifier.state = notifier.state.copyWith(
+        //   selectedPdfs: validPaths.toSet(),
+        // );
+        notifier.updateSelectedPdfs(validPaths.toSet());
 
         final recentFileStorage = RecentFileStorage();
         await recentFileStorage.addFile(validPaths.first);
@@ -94,44 +95,6 @@ class HelperMethods {
     return status.isGranted;
   }
 
-  static Future<String> enahnceImage(String imagePath) async {
-    // Read the image
-    final img.Image? image = img.decodeImage(
-      await File(imagePath).readAsBytes(),
-    );
-    if (image == null) throw Exception('Falied to decode image');
-
-    // Adjust brightness and contrast
-    img.Image adjustedImage = img.adjustColor(
-      image,
-      brightness: 1.2,
-      contrast: 1.5,
-    );
-
-    // remove noice (simple median filter approximation)
-    adjustedImage = img.noise(adjustedImage, 0.5);
-
-    // Deskew the image (basic implementation using rotation)
-    adjustedImage = img.copyRotate(
-      adjustedImage,
-      angle: _detectSkew(adjustedImage),
-    );
-
-    // Save the inhanced image
-    final Directory directory = await getApplicationSupportDirectory();
-    final String enhancedPath = '${directory.path}/enchanced_scan.jpg';
-    await File(enhancedPath).writeAsBytes(img.encodeJpg(adjustedImage));
-
-    return enhancedPath;
-  }
-
-  // Basic skew detection (simplified for demonestration)
-  static double _detectSkew(img.Image image) {
-    // In a real app, use Hough transform or a library like OpenCV for accurate deskew
-    // This is a placeholder returning a small rotation angle
-    return 0.5; // Rotate by 0.5 degrees (adjust based on actual detection)
-  }
-
   //save a single File
   static Future<String> saveFile(Uint8List bytes, String fileName) async {
     if (Platform.isAndroid) {
@@ -140,16 +103,22 @@ class HelperMethods {
         throw Exception('Storage permission denied');
       }
 
-      // Get the public Downloads or Documents directory
-      final Directory directory = Directory('/storage/emulated/0/Documents');
+      // Get the public Documents directory
+      final Directory? directory = Directory('/storage/emulated/0/Documents');
 
-      if (await directory.exists()) {
-        await directory.create(recursive: true);
+      if (directory == null || !(await directory.exists())) {
+        throw Exception('Unable to access public Documents directory');
       }
+
+      log('Directory in save file: $directory');
+      // if (await directory.exists()) {
+      //   await directory.create(recursive: true);
+      // }
 
       final String path = '${directory.path}/$fileName.pdf';
       final File file = File(path);
       await file.writeAsBytes(bytes, flush: true);
+      log("path in save file: $path");
       return path;
     } else if (Platform.isIOS) {
       final Directory directory = await getApplicationDocumentsDirectory();

@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
-import '../../providers/pdf_provider.dart';
 import '../../providers/pdf_state_provider.dart';
 import '../../widgets/add_button.dart';
+import '../../widgets/submit_button.dart';
 
 class SplitPdfScreen extends ConsumerStatefulWidget {
   const SplitPdfScreen({super.key});
@@ -65,6 +65,7 @@ class _SplitPdfScreenState extends ConsumerState<SplitPdfScreen> {
             padding: const EdgeInsets.all(16),
             child: AddButton(notifier: notifier),
           ),
+          SubmitButton(title: 'Split PDF', onPressed: () {}),
         ],
       ),
     );
