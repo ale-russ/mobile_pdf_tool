@@ -1,8 +1,11 @@
 // ignore_for_file: depend_on_referenced_packages
 
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../helpers/pdf_file_picker.dart';
 import '../../providers/pdf_state_provider.dart';
 import '../../widgets/add_button.dart';
 import '../../widgets/mereg_pdf_widget.dart';
@@ -20,8 +23,10 @@ class _MergePdfScreenState extends ConsumerState<MergePdfScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final pdfState = ref.watch(pdfStateProvider);
+    // final pdfState = ref.watch(pdfStateProvider);
+    final pdfState = ref.watch(pdfMergeProvider);
     final selectedPdfs = pdfState.selectedPdfs.toList();
+    final notifier = ref.read(pdfMergeProvider.notifier);
 
     return Scaffold(
       backgroundColor: const Color(0xFFF9FAFB),
@@ -48,7 +53,12 @@ class _MergePdfScreenState extends ConsumerState<MergePdfScreen> {
             const SizedBox(height: 12),
             MergePdfWidget(),
 
-            AddButton(),
+            AddButton(
+              onPressed: () {
+                log('button clicked');
+                PdfFilePicker.pick(notifier: notifier, ref: ref);
+              },
+            ),
 
             const SizedBox(height: 12),
 

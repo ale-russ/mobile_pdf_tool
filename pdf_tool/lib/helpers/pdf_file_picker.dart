@@ -25,12 +25,11 @@ class PdfFilePicker {
               .whereType<String>()
               .where((path) => File(path).existsSync())
               .toList();
-
+      log('VALID PATHS: $validPaths');
       if (validPaths.isNotEmpty) {
         notifier.setPdfPath(validPaths);
-        notifier.state = notifier.state.copyWith(
-          selectedPdfs: validPaths.toSet(),
-        );
+
+        notifier.updateSelectedPdfs(validPaths.toSet());
 
         final recentFileStorage = RecentFileStorage();
         await recentFileStorage.addFile(validPaths.first);

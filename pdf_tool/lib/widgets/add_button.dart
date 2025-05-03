@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -5,11 +7,21 @@ import '../utils/app_colors.dart';
 import '../utils/helper_methods.dart';
 
 class AddButton extends ConsumerWidget {
-  const AddButton({super.key, this.notifier});
+  const AddButton({
+    super.key,
+    this.notifier,
+    this.title,
+    this.isAddPDF = true,
+    this.onPressed,
+  });
   final notifier;
+  final String? title;
+  final bool isAddPDF;
+  final VoidCallback? onPressed;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    log('onPressed: $onPressed');
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
@@ -23,10 +35,14 @@ class AddButton extends ConsumerWidget {
         ],
       ),
       child: OutlinedButton.icon(
-        onPressed: () => HelperMethods.pickFiles(ref),
-        icon: Icon(Icons.add, color: AppColors.primaryColor),
-        label: const Text(
-          'Add PDF',
+        // onPressed: () => onPressed ?? HelperMethods.pickFiles(ref),
+        onPressed: onPressed,
+        icon:
+            isAddPDF
+                ? Icon(Icons.add, color: AppColors.primaryColor)
+                : const SizedBox.shrink(),
+        label: Text(
+          title ?? 'Add PDF',
           style: TextStyle(color: Color(0xFF111827)),
         ),
         style: OutlinedButton.styleFrom(
@@ -37,6 +53,41 @@ class AddButton extends ConsumerWidget {
           ),
           padding: const EdgeInsets.symmetric(vertical: 14),
         ),
+      ),
+    );
+  }
+}
+
+class CircularAddButton extends ConsumerWidget {
+  const CircularAddButton({
+    super.key,
+    this.notifier,
+    this.title,
+    this.isAddPDF = true,
+    this.onPressed,
+  });
+  final notifier;
+  final String? title;
+  final bool isAddPDF;
+  final VoidCallback? onPressed;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Container(
+      width: 50,
+      height: 50,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        border: Border.all(color: AppColors.borderColor),
+      ),
+      child: ElevatedButton(
+        onPressed: onPressed,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: AppColors.primaryColor,
+          shape: const CircleBorder(),
+          padding: EdgeInsets.zero,
+        ),
+        child: Icon(Icons.add, size: 25, color: AppColors.white),
       ),
     );
   }

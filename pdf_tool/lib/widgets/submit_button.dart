@@ -19,7 +19,7 @@ class SubmitButton extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Container(
       width: double.infinity,
-      // padding: const EdgeInsets.only(right: 20, left: 20),
+      margin: const EdgeInsets.only(left: 16, right: 16, bottom: 20),
       child: ElevatedButton(
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(

@@ -27,7 +27,7 @@ class DisplayPDFScreen extends ConsumerWidget {
             child: SizedBox(
               height: MediaQuery.of(context).size.height,
               child:
-                  (pdfState.pdfPaths != null && pdfState.pdfPaths!.isNotEmpty)
+                  (pdfState.pdfPaths == null || pdfState.pdfPaths!.isEmpty)
                       ? Center(
                         child: Text(
                           'No PDF loaded',
@@ -58,7 +58,10 @@ class DisplayPDFScreen extends ConsumerWidget {
             ),
           ),
 
-          Padding(padding: const EdgeInsets.all(16), child: AddButton()),
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: AddButton(title: 'Open PDF'),
+          ),
         ],
       ),
     );

@@ -97,8 +97,10 @@ class _MergePdfWidgetState extends ConsumerState<MergePdfWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final pdfState = ref.watch(pdfStateProvider);
+    // final pdfState = ref.watch(pdfStateProvider);
+    final pdfState = ref.watch(pdfMergeProvider);
     final selectedPdfs = pdfState.selectedPdfs.toList();
+    final notifier = ref.read(pdfSplitProvider.notifier);
     log('selectedPDFs: $selectedPdfs');
     return Expanded(
       child:

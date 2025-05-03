@@ -11,7 +11,6 @@ class HomeScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      // backgroundColor: const Color(0xFFF9FAFB),
       backgroundColor: const Color(0xffFAFAFA),
       appBar: AppBar(
         backgroundColor: Colors.white,
