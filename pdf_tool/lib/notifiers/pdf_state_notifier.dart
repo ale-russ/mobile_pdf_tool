@@ -66,3 +66,5 @@ class PdfReaderNotifier extends PdfStateNotifier {}
 class PdfSplitNotifier extends PdfStateNotifier {}
 
 class PdfMergeNotifier extends PdfStateNotifier {}
+
+class ImageToPdfNotifier extends PdfStateNotifier {}

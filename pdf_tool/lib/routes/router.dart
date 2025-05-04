@@ -4,6 +4,7 @@ import 'package:pdf_tool/pages/home/home.dart';
 import 'package:pdf_tool/pages/home/pdf_editor_screen.dart';
 
 import '../pages/home/display_pdf.dart';
+import '../pages/home/image_to_pdf_screen.dart';
 import '../pages/home/merge_pdf.dart';
 import '../pages/home/scan_pdf.dart';
 import '../pages/home/split_pdf_screen.dart';
@@ -40,6 +41,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: '/scan-document',
                 builder: (context, state) => ScanPDFScreen(),
+              ),
+              GoRoute(
+                path: '/image-pdf',
+                builder: (context, state) => ImageToPdfScreen(),
               ),
               GoRoute(
                 path: '/success',

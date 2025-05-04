@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
-import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
 import '../../helpers/pdf_file_picker.dart';
 import '../../providers/action_history_provider.dart';
@@ -178,7 +177,6 @@ class _SplitPdfScreenState extends ConsumerState<SplitPdfScreen> {
   ) async => await showDialog(
     context: context,
     builder: (context) {
-      // String errorText = '';
       return AlertDialog(
         backgroundColor: AppColors.backgroundColor,
         title: Text("Split PDF", style: TextStyle(fontWeight: FontWeight.bold)),
@@ -188,8 +186,6 @@ class _SplitPdfScreenState extends ConsumerState<SplitPdfScreen> {
           decoration: InputDecoration(
             labelText: 'Split pages (e.g. 3,7 or 2-5)',
             labelStyle: TextStyle(fontSize: 12, color: AppColors.textColor),
-            // errorText: errorText,
-            // errorStyle: TextStyle(fontSize: 12, color: Colors.red),
           ),
           keyboardType: TextInputType.numberWithOptions(decimal: false),
         ),
@@ -213,7 +209,6 @@ class _SplitPdfScreenState extends ConsumerState<SplitPdfScreen> {
           TextButton(
             onPressed: () async {
               if (controller.text.trim().isEmpty) {
-                // errorText = "Please enter valid page number";
                 setState(() {});
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(

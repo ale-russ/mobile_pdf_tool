@@ -13,9 +13,10 @@ class PdfFilePicker {
     required WidgetRef ref,
     required PdfStateNotifier notifier,
     bool allowMultiple = true,
+    FileType type = FileType.any,
   }) async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
-      type: FileType.any,
+      type: type,
       allowMultiple: allowMultiple,
     );
 

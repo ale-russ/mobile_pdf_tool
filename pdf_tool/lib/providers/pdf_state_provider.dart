@@ -20,3 +20,7 @@ final pdfSplitProvider = StateNotifierProvider<PdfSplitNotifier, PdfState>(
 final pdfMergeProvider = StateNotifierProvider<PdfMergeNotifier, PdfState>(
   (ref) => PdfMergeNotifier(),
 );
+
+final imageToPdfProvider = StateNotifierProvider<ImageToPdfNotifier, PdfState>(
+  (ref) => ImageToPdfNotifier(),
+);

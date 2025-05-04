@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -17,8 +15,6 @@ class DisplayRecentFiles extends ConsumerWidget {
     final recentFilesAsync = ref.watch(recentFilesProvider);
     return recentFilesAsync.when(
       data: (files) {
-        log('recentFiles: $files');
-
         return files.isEmpty
             ? const SizedBox.shrink()
             : SingleChildScrollView(
@@ -31,7 +27,6 @@ class DisplayRecentFiles extends ConsumerWidget {
                   ),
                   const SizedBox(height: 8),
                   SizedBox(
-                    // height: 300,
                     child: ListView.builder(
                       itemCount: files.length,
                       shrinkWrap: true,

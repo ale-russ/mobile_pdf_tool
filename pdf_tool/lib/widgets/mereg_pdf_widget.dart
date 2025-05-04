@@ -33,9 +33,13 @@ class _MergePdfWidgetState extends ConsumerState<MergePdfWidget> {
     final List<String> pdfPaths = pdfState.selectedPdfs.toList();
     if (pdfPaths.length < 2) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Please select at least 2 PDFs to Merge")),
+        SnackBar(
+          backgroundColor: Colors.red,
+          content: Text("Please select at least 2 PDFs to Merge"),
+        ),
       );
-
+      isLoading = false;
+      setState(() {});
       return;
     }
 

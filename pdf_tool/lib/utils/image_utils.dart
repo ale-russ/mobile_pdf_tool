@@ -1,13 +1,19 @@
 import 'dart:typed_data';
 import 'dart:ui';
 
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image/image.dart' as img;
+import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 
 import 'package:pdf/widgets.dart' as pw;
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
+
+import '../providers/pdf_state_provider.dart';
 
 class ImageUtils {
   static Future<XFile?> pickDocumentImage() async {
@@ -75,34 +81,73 @@ class ImageUtils {
   }
 
   // Convert an image to PDF
-  static Future<String> imageToPdf(String imagePath) async {
+  static Future<void> imageToPdf(WidgetRef ref) async {
+    final result = await FilePicker.platform.pickFiles(
+      allowMultiple: true,
+      type: FileType.image,
+    );
+
+    if (result == null || result.files.isEmpty) return;
+
     final PdfDocument document = PdfDocument();
-    final PdfPage page = document.pages.add();
-    final img.Image? image = img.decodeImage(
-      await File(imagePath).readAsBytes(),
-    );
-    if (image == null) {
-      throw Exception('Failed to decode image for PDF conversion');
+
+    for (final file in result.files) {
+      CroppedFile? croppedImage;
+      try {
+        croppedImage = (await cropImage(file.path!)) as CroppedFile?;
+        // if (croppedImage == null) continue;
+      } catch (err) {
+        debugPrint('Cropping falied for ${file.name}');
+        continue;
+      }
+
+      final Uint8List imageBytes = File(croppedImage!.path).readAsBytesSync();
+
+      final PdfPage page = document.pages.add();
+      final PdfImage image = PdfBitmap(imageBytes);
+
+      page.graphics.drawImage(
+        image,
+        Rect.fromLTWH(
+          0,
+          0,
+          page.getClientSize().width,
+          page.getClientSize().height,
+        ),
+      );
     }
-
-    // Convert image to bytes for PDF
-    final Uint8List imageBytes = Uint8List.fromList(img.encodeJpg(image));
-    final PdfBitmap pdfImage = PdfBitmap(imageBytes);
-    page.graphics.drawImage(
-      pdfImage,
-      Rect.fromLTWH(
-        0,
-        0,
-        page.getClientSize().width,
-        page.getClientSize().height,
-      ),
-    );
-
-    // Save the PDF
-    final Directory directory = await getApplicationSupportDirectory();
-    final String pdfPath = '${directory.path}/scanned_document.pdf';
-    await File(pdfPath).writeAsBytes(await document.save());
+    final List<int> bytes = await document.save();
     document.dispose();
-    return pdfPath;
+
+    final dir = await getApplicationDocumentsDirectory();
+    final path =
+        '${dir.path}/image_to_pdf_${DateTime.now().millisecondsSinceEpoch}.pdf';
+    final file = File(path);
+    await file.writeAsBytes(bytes);
+
+    ref.read(imageToPdfProvider.notifier).setPdfPath([path]);
+  }
+
+  static Future<File?> cropImage(String imagePath) async {
+    final croppedFile = await ImageCropper().cropImage(
+      sourcePath: imagePath,
+      aspectRatio: const CropAspectRatio(ratioX: 4, ratioY: 3),
+      uiSettings: [
+        AndroidUiSettings(
+          toolbarTitle: 'Crop Image',
+          toolbarColor: Colors.black,
+          toolbarWidgetColor: Colors.white,
+          initAspectRatio: CropAspectRatioPreset.original,
+          lockAspectRatio: false,
+          hideBottomControls: true,
+          cropFrameStrokeWidth: 2,
+          showCropGrid: true,
+          cropGridStrokeWidth: 1,
+          activeControlsWidgetColor: Colors.blue,
+        ),
+        IOSUiSettings(title: 'Crop Image'),
+      ],
+    );
+    return croppedFile != null ? File(croppedFile.path) : null;
   }
 }
