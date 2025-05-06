@@ -213,7 +213,7 @@ class _SplitPdfScreenState extends ConsumerState<SplitPdfScreen> {
             labelText: 'Split pages (e.g. 3,7 or 2-5)',
             labelStyle: TextStyle(fontSize: 12, color: AppColors.textColor),
           ),
-          keyboardType: TextInputType.numberWithOptions(decimal: false),
+          keyboardType: TextInputType.text,
         ),
         actions: [
           TextButton(

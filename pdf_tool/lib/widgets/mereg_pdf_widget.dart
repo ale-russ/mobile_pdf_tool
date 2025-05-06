@@ -9,6 +9,7 @@ import 'package:path/path.dart' as path;
 
 import '../providers/action_history_provider.dart';
 import '../providers/pdf_state_provider.dart';
+import '../services/pdf_services.dart';
 import '../utils/app_colors.dart';
 import '../utils/helper_methods.dart';
 import '../utils/pdf_util.dart';
@@ -52,8 +53,13 @@ class _MergePdfWidgetState extends ConsumerState<MergePdfWidget> {
     try {
       ref.read(pdfMergeProvider.notifier).clearPdfPaths();
       if (totalSize <= maxFileSizeForFrontend) {
-        final Uint8List mergedBytes = await PdfUtil.mergePDFs(pdfPaths);
+        // final Uint8List mergedBytes = await PdfUtil.mergePDFs(pdfPaths);
+        // final Uint8List mergedBytes = await PdfServices().mergePdfs(ref);
+        final filePaths = pdfPaths;
 
+        final File responseFile = await PdfServices().mergePdfs(filePaths);
+
+        final Uint8List mergedBytes = await responseFile.readAsBytes();
         final savedPath = await HelperMethods.fileSave(mergedBytes);
 
         log('Saved path: $savedPath');

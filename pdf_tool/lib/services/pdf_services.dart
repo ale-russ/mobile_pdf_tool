@@ -1,26 +1,40 @@
 import 'dart:developer';
+import 'dart:io';
 
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dio/dio.dart';
-import 'package:pdf_tool/providers/action_history_provider.dart';
-import 'package:pdf_tool/providers/pdf_state_provider.dart';
+import 'package:path_provider/path_provider.dart';
 
 class PdfServices {
-  // var baseUrl = "http://0.0.0.0:8000";
-  var baseUrl = "http://10.0.2.2:8000";
+  var baseUrl = "http://10.0.2.2:5000";
   var dio = Dio();
-  Future<void> mergePdfs(WidgetRef ref) async {
+  Future<File> mergePdfs(List<String> filePaths) async {
     var formData = FormData();
 
-    List<String> filePaths = [ref.read(pdfStateProvider).pdfPaths!.first];
     for (var path in filePaths) {
       formData.files.add(MapEntry("files", await MultipartFile.fromFile(path)));
     }
     try {
-      await dio.post("backdend_url/merge", data: formData);
-      ref.read(actionHistoryProvider.notifier).addAction('Merge PDFs');
+      final response = await dio.post(
+        "$baseUrl/merge",
+        data: formData,
+        options: Options(responseType: ResponseType.bytes),
+      );
+      final tempDir = await getTemporaryDirectory();
+      final mergedFile = File("${tempDir.path}/merged.pdf");
+      await mergedFile.writeAsBytes(response.data);
+      return mergedFile;
     } catch (err) {
       log('Error: $err');
+      throw Exception('Internal Server Error');
+    }
+  }
+
+  Future<void> connectToServer() async {
+    try {
+      var response = await dio.get('$baseUrl/docs');
+      log('response: ${response.data}');
+    } catch (err) {
+      throw Exception('Error: $err');
     }
   }
 
