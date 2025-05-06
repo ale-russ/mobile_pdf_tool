@@ -1,12 +1,17 @@
 import 'dart:io';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
 import '../../providers/pdf_state_provider.dart';
+import '../../utils/app_colors.dart';
 import '../../utils/image_utils.dart';
+import '../../widgets/add_button.dart';
+import '../../widgets/save_file_icon_widget.dart';
 
 class ImageToPdfScreen extends ConsumerStatefulWidget {
   const ImageToPdfScreen({super.key});
@@ -29,8 +34,8 @@ class _ImageToPdfScreenState extends ConsumerState<ImageToPdfScreen> {
     setState(() {
       isLoading = true;
     });
-
-    if (!await Permission.storage.request().isGranted) {
+    await Permission.camera.request();
+    if (!await Permission.camera.request().isGranted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           backgroundColor: Colors.red,
@@ -40,7 +45,9 @@ class _ImageToPdfScreenState extends ConsumerState<ImageToPdfScreen> {
       return;
     }
 
-    await ImageUtils.imageToPdf(ref);
+    final result = await ImageUtils.imageToPdf();
+
+    ref.read(imageToPdfProvider.notifier).setPdfBytes(result);
 
     setState(() {
       isLoading = false;
@@ -50,19 +57,48 @@ class _ImageToPdfScreenState extends ConsumerState<ImageToPdfScreen> {
   @override
   Widget build(BuildContext context) {
     final pdfState = ref.watch(imageToPdfProvider);
+
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Image To PDFs'),
-          backgroundColor: Colors.white,
+          backgroundColor: AppColors.white,
+          automaticallyImplyLeading: false,
+          leading: IconButton(
+            onPressed: () {
+              ref.invalidate(imageToPdfProvider);
+              context.pop();
+            },
+            icon: Icon(Icons.arrow_back),
+          ),
           elevation: 0.5,
-          foregroundColor: const Color(0xFF111827),
+          actions: [
+            SaveFileIconWidget(
+              backgroundColor: Color(0xffF8F2F1),
+              icon: Icon(Icons.bookmark, color: Color(0xff9A5943)),
+              onPressed: () async {
+                final path = await FilePicker.platform.saveFile(
+                  dialogTitle: 'Save PDF',
+                  type: FileType.custom,
+                  fileName: 'converted_pdf.pdf',
+                  allowedExtensions: ['pdf'],
+                  bytes: pdfState.pdfBytes,
+                );
+                if (!mounted) return;
+                if (path != null) {
+                  final file = File(path);
+                  await file.writeAsBytes(pdfState.pdfBytes as List<int>);
+                }
+              },
+            ),
+          ],
         ),
-        body:
-            (pdfState.pdfPaths == null || pdfState.pdfPaths!.isEmpty)
+        body: Stack(
+          children: [
+            (pdfState.pdfBytes == null || pdfState.pdfBytes!.isEmpty)
                 ? Center(
                   child: Text(
-                    'No PDF loaded',
+                    'No File Loaded',
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
@@ -72,9 +108,9 @@ class _ImageToPdfScreenState extends ConsumerState<ImageToPdfScreen> {
                 )
                 : isLoading
                 ? Center(child: CircularProgressIndicator())
-                : SfPdfViewer.file(
+                : SfPdfViewer.memory(
                   key: _pdfViewerKey,
-                  File(pdfState.pdfPaths!.first),
+                  pdfState.pdfBytes!,
                   onDocumentLoaded: (details) {
                     ref
                         .read(imageToPdfProvider.notifier)
@@ -88,6 +124,16 @@ class _ImageToPdfScreenState extends ConsumerState<ImageToPdfScreen> {
                             pdfState.totalPages,
                           ),
                 ),
+
+            Positioned(
+              right: 8,
+              bottom: MediaQuery.of(context).size.height * 0.03,
+              child: CircularAddButton(
+                onPressed: () => convertImagesToPdf(context),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

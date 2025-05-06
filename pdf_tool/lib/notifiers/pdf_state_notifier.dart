@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class PdfState {
@@ -6,6 +8,7 @@ class PdfState {
   final int totalPages;
   final Set<String> selectedPdfs;
   final String? splitPdfPath;
+  final Uint8List? pdfBytes;
 
   PdfState({
     this.pdfPaths,
@@ -13,6 +16,7 @@ class PdfState {
     this.totalPages = 1,
     this.selectedPdfs = const <String>{},
     this.splitPdfPath = '',
+    this.pdfBytes,
   });
 
   PdfState copyWith({
@@ -21,6 +25,7 @@ class PdfState {
     int? totalPages,
     Set<String>? selectedPdfs,
     String? splitPdfPath,
+    Uint8List? pdfBytes,
   }) {
     return PdfState(
       pdfPaths: pdfPaths ?? this.pdfPaths,
@@ -28,6 +33,7 @@ class PdfState {
       totalPages: totalPages ?? this.totalPages,
       selectedPdfs: selectedPdfs ?? this.selectedPdfs,
       splitPdfPath: splitPdfPath ?? this.splitPdfPath,
+      pdfBytes: pdfBytes ?? this.pdfBytes,
     );
   }
 }
@@ -67,4 +73,10 @@ class PdfSplitNotifier extends PdfStateNotifier {}
 
 class PdfMergeNotifier extends PdfStateNotifier {}
 
-class ImageToPdfNotifier extends PdfStateNotifier {}
+class ImageToPdfNotifier extends PdfStateNotifier {
+  ImageToPdfNotifier() : super();
+
+  void setPdfBytes(Uint8List pdfBytes) =>
+      state = state.copyWith(pdfBytes: pdfBytes);
+  void clearImages() => state = state.copyWith(pdfBytes: null);
+}

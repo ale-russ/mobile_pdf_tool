@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -14,6 +15,7 @@ import '../../utils/app_colors.dart';
 import '../../utils/helper_methods.dart';
 import '../../utils/pdf_util.dart';
 import '../../widgets/add_button.dart';
+import '../../widgets/save_file_icon_widget.dart';
 import '../../widgets/search_widget.dart';
 import '../../widgets/submit_button.dart';
 
@@ -50,11 +52,20 @@ class _SplitPdfScreenState extends ConsumerState<SplitPdfScreen> {
         backgroundColor: const Color(0xFFF9FAFB),
         appBar: AppBar(
           title: const Text('Split PDFs'),
+          automaticallyImplyLeading: false,
+          leading: IconButton(
+            onPressed: () {
+              ref.invalidate(pdfSplitProvider);
+              context.pop();
+            },
+            icon: Icon(Icons.arrow_back),
+          ),
           actions: [
             Container(
               height: 40,
               width: 40,
               decoration: BoxDecoration(
+                color: Color(0xffFFF1F1),
                 shape: BoxShape.circle,
                 border: Border.all(color: AppColors.borderColor),
               ),
@@ -62,12 +73,31 @@ class _SplitPdfScreenState extends ConsumerState<SplitPdfScreen> {
               margin: const EdgeInsets.symmetric(horizontal: 8),
 
               child: IconButton(
+                color: Color(0xff9A5943),
                 onPressed: () async {
                   setState(() => _showSearchField = !_showSearchField);
                 },
                 style: IconButton.styleFrom(padding: EdgeInsets.zero),
                 icon: Icon(Icons.search),
               ),
+            ),
+            SaveFileIconWidget(
+              onPressed: () async {
+                final path = await FilePicker.platform.saveFile(
+                  dialogTitle: 'Save PDF',
+                  type: FileType.custom,
+                  fileName: 'converted_pdf.pdf',
+                  allowedExtensions: ['pdf'],
+                  bytes: pdfState.pdfBytes,
+                );
+                if (!mounted) return;
+                if (path != null) {
+                  final file = File(path);
+                  await file.writeAsBytes(pdfState.pdfBytes as List<int>);
+                }
+              },
+              backgroundColor: Color(0xffFFF1F1),
+              icon: Icon(Icons.bookmark, color: Color(0xff9A5943)),
             ),
           ],
           backgroundColor: Colors.white,
@@ -134,12 +164,7 @@ class _SplitPdfScreenState extends ConsumerState<SplitPdfScreen> {
                 SubmitButton(
                   title: 'Split PDF',
                   onPressed:
-                      () => {
-                        log(
-                          'Current PDF Paths: ${ref.read(pdfStateProvider).pdfPaths}',
-                        ),
-                        _splitPDFs(context, _splitPointsController, ref),
-                      },
+                      () => _splitPDFs(context, _splitPointsController, ref),
                 ),
               ],
             ),
@@ -177,6 +202,7 @@ class _SplitPdfScreenState extends ConsumerState<SplitPdfScreen> {
   ) async => await showDialog(
     context: context,
     builder: (context) {
+      final notifier = ref.read(pdfSplitProvider.notifier);
       return AlertDialog(
         backgroundColor: AppColors.backgroundColor,
         title: Text("Split PDF", style: TextStyle(fontWeight: FontWeight.bold)),
@@ -229,7 +255,7 @@ class _SplitPdfScreenState extends ConsumerState<SplitPdfScreen> {
                 );
                 return;
               }
-              log('PDF STATE for SPLITTING: ${pdfState.pdfPaths!.first}');
+
               final String pdfPath = pdfState.pdfPaths!.first;
               final int fileSize = await File(pdfPath).length();
 
@@ -240,22 +266,27 @@ class _SplitPdfScreenState extends ConsumerState<SplitPdfScreen> {
                     pdfPath,
                     _splitPointsController.text.trim(),
                   );
-                  final List<String> savedPaths =
-                      await HelperMethods.saveMultipleFiles(
-                        splitBytes,
-                        'split',
-                      );
+                  final savedPaths = await HelperMethods.fileSave(
+                    splitBytes.first,
+                  );
+                  // await HelperMethods.saveMultipleFiles(
+                  //   splitBytes,
+                  //   'split',
+                  // );
                   ref
                       .read(actionHistoryProvider.notifier)
                       .addAction('Split PDFs (Frontend)');
                   if (savedPaths.isNotEmpty) {
                     // Update the viewed PDF to the first split file
-                    ref.read(pdfStateProvider.notifier).setPdfPath(savedPaths);
+                    ref.read(pdfStateProvider.notifier).setPdfPath([
+                      savedPaths,
+                    ]);
 
                     // update the selectedPDFs to only include the split files
-                    ref.read(pdfStateProvider.notifier).state = ref
-                        .read(pdfStateProvider)
-                        .copyWith(selectedPdfs: savedPaths.toSet());
+                    // ref.read(pdfStateProvider.notifier).state = ref
+                    //     .read(pdfStateProvider)
+                    //     .copyWith(selectedPdfs: savedPaths.toSet());
+                    notifier.setSelectedPdfs([savedPaths]);
 
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
@@ -264,7 +295,7 @@ class _SplitPdfScreenState extends ConsumerState<SplitPdfScreen> {
                         ),
                       ),
                     );
-                    await HelperMethods.openFile(savedPaths.first);
+                    await HelperMethods.openFile(savedPaths);
                     context.pop();
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(

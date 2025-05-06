@@ -95,7 +95,7 @@ class HelperMethods {
     return status.isGranted;
   }
 
-  //save a single File
+  // save a single File
   static Future<String> saveFile(Uint8List bytes, String fileName) async {
     if (Platform.isAndroid) {
       final status = await Permission.storage.request();
@@ -128,6 +128,23 @@ class HelperMethods {
       return path;
     } else {
       throw UnsupportedError('Unsupported Platform');
+    }
+  }
+
+  static Future<String> fileSave(Uint8List bytes) async {
+    final path = await FilePicker.platform.saveFile(
+      dialogTitle: 'Save AS PDF',
+      type: FileType.custom,
+      allowedExtensions: ['pdf'],
+      fileName: 'new_pdf.pdf',
+      bytes: bytes,
+    );
+    if (path != null) {
+      final file = File(path);
+      await file.writeAsBytes(bytes, flush: true);
+      return path;
+    } else {
+      throw Exception("Unable to save File");
     }
   }
 

@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
+import '../../helpers/pdf_file_picker.dart';
 import '../../providers/pdf_state_provider.dart';
 import '../../widgets/add_button.dart';
 
@@ -19,6 +20,7 @@ class DisplayPDFScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final pdfState = ref.watch(pdfStateProvider);
+    final notifier = ref.read(pdfStateProvider.notifier);
     log('pdfState: ${pdfState.pdfPaths}');
     return SafeArea(
       child: Column(
@@ -60,7 +62,15 @@ class DisplayPDFScreen extends ConsumerWidget {
 
           Padding(
             padding: const EdgeInsets.all(16),
-            child: AddButton(title: 'Open PDF'),
+            child: AddButton(
+              title: 'Open PDF',
+              onPressed:
+                  () => PdfFilePicker.pick(
+                    ref: ref,
+                    notifier: notifier,
+                    allowMultiple: false,
+                  ),
+            ),
           ),
         ],
       ),

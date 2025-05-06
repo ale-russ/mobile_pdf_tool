@@ -28,9 +28,10 @@ class _MergePdfWidgetState extends ConsumerState<MergePdfWidget> {
   void _mergePDFs(WidgetRef ref, BuildContext context) async {
     isLoading = true;
     setState(() {});
-    final pdfState = ref.watch(pdfStateProvider);
+    final pdfState = ref.watch(pdfMergeProvider);
     // Placeholder for merge logic (call backend)
     final List<String> pdfPaths = pdfState.selectedPdfs.toList();
+    log("pdfPaths: ${pdfPaths.length}");
     if (pdfPaths.length < 2) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -49,22 +50,18 @@ class _MergePdfWidgetState extends ConsumerState<MergePdfWidget> {
     )).reduce((a, b) => a + b);
 
     try {
-      // ref.read(pdfStateProvider.notifier).state = ref
-      //     .read(pdfStateProvider)
-      //     .copyWith(pdfPaths: []);
-      ref.read(pdfStateProvider.notifier).clearPdfPaths();
+      ref.read(pdfMergeProvider.notifier).clearPdfPaths();
       if (totalSize <= maxFileSizeForFrontend) {
         final Uint8List mergedBytes = await PdfUtil.mergePDFs(pdfPaths);
-        final String savedPath = await HelperMethods.saveFile(
-          mergedBytes,
-          'merged_pdf.pdf',
-        );
+
+        final savedPath = await HelperMethods.fileSave(mergedBytes);
+
         log('Saved path: $savedPath');
         ref
             .read(actionHistoryProvider.notifier)
             .addAction("Merge PDFs (Frontend)");
-        ref.read(pdfStateProvider.notifier).setPdfPath([savedPath]);
-        ref.read(pdfStateProvider.notifier).clearSelectedPdfs();
+        ref.read(pdfMergeProvider.notifier).setPdfPath([savedPath]);
+        ref.read(pdfMergeProvider.notifier).clearSelectedPdfs();
 
         context.push('/home/success');
       } else {
@@ -101,11 +98,9 @@ class _MergePdfWidgetState extends ConsumerState<MergePdfWidget> {
 
   @override
   Widget build(BuildContext context) {
-    // final pdfState = ref.watch(pdfStateProvider);
     final pdfState = ref.watch(pdfMergeProvider);
     final selectedPdfs = pdfState.selectedPdfs.toList();
-    final notifier = ref.read(pdfSplitProvider.notifier);
-    log('selectedPDFs: $selectedPdfs');
+
     return Expanded(
       child:
           selectedPdfs.isEmpty

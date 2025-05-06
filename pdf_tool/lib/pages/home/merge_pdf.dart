@@ -1,15 +1,16 @@
-// ignore_for_file: depend_on_referenced_packages
+import 'dart:io';
 
-import 'dart:developer';
-
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../helpers/pdf_file_picker.dart';
 import '../../providers/pdf_state_provider.dart';
 import '../../widgets/add_button.dart';
 import '../../widgets/mereg_pdf_widget.dart';
 import '../../widgets/recent_files_widget.dart';
+import '../../widgets/save_file_icon_widget.dart';
 
 class MergePdfScreen extends ConsumerStatefulWidget {
   const MergePdfScreen({super.key});
@@ -23,7 +24,6 @@ class _MergePdfScreenState extends ConsumerState<MergePdfScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // final pdfState = ref.watch(pdfStateProvider);
     final pdfState = ref.watch(pdfMergeProvider);
     final selectedPdfs = pdfState.selectedPdfs.toList();
     final notifier = ref.read(pdfMergeProvider.notifier);
@@ -32,9 +32,36 @@ class _MergePdfScreenState extends ConsumerState<MergePdfScreen> {
       backgroundColor: const Color(0xFFF9FAFB),
       appBar: AppBar(
         title: const Text('Merge PDFs'),
+        automaticallyImplyLeading: false,
+        leading: IconButton(
+          onPressed: () {
+            ref.invalidate(pdfMergeProvider);
+            context.pop();
+          },
+          icon: Icon(Icons.arrow_back),
+        ),
         backgroundColor: Colors.white,
         elevation: 0.5,
-        foregroundColor: const Color(0xFF111827),
+        actions: [
+          SaveFileIconWidget(
+            onPressed: () async {
+              final path = await FilePicker.platform.saveFile(
+                dialogTitle: 'Save PDF',
+                type: FileType.custom,
+                fileName: 'converted_pdf.pdf',
+                allowedExtensions: ['pdf'],
+                bytes: pdfState.pdfBytes,
+              );
+              if (!mounted) return;
+              if (path != null) {
+                final file = File(path);
+                await file.writeAsBytes(pdfState.pdfBytes as List<int>);
+              }
+            },
+            backgroundColor: Color(0xffFFF1F1),
+            icon: Icon(Icons.bookmark, color: Color(0xff9A5943)),
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
@@ -55,7 +82,6 @@ class _MergePdfScreenState extends ConsumerState<MergePdfScreen> {
 
             AddButton(
               onPressed: () {
-                log('button clicked');
                 PdfFilePicker.pick(notifier: notifier, ref: ref);
               },
             ),
@@ -63,8 +89,6 @@ class _MergePdfScreenState extends ConsumerState<MergePdfScreen> {
             const SizedBox(height: 12),
 
             DisplayRecentFiles(),
-
-            // const SizedBox(height: 12),
           ],
         ),
       ),

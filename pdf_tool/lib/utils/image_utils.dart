@@ -1,9 +1,9 @@
+import 'dart:developer';
 import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image/image.dart' as img;
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
@@ -12,8 +12,6 @@ import 'package:pdf/widgets.dart' as pw;
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
-
-import '../providers/pdf_state_provider.dart';
 
 class ImageUtils {
   static Future<XFile?> pickDocumentImage() async {
@@ -81,29 +79,31 @@ class ImageUtils {
   }
 
   // Convert an image to PDF
-  static Future<void> imageToPdf(WidgetRef ref) async {
+  static Future<Uint8List> imageToPdf() async {
     final result = await FilePicker.platform.pickFiles(
       allowMultiple: true,
       type: FileType.image,
     );
 
-    if (result == null || result.files.isEmpty) return;
+    if (result == null || result.files.isEmpty) throw Exception('Empty File');
 
     final PdfDocument document = PdfDocument();
 
     for (final file in result.files) {
       CroppedFile? croppedImage;
       try {
-        croppedImage = (await cropImage(file.path!)) as CroppedFile?;
-        // if (croppedImage == null) continue;
+        croppedImage = await ImageCropper.platform.cropImage(
+          sourcePath: file.path!,
+        );
       } catch (err) {
-        debugPrint('Cropping falied for ${file.name}');
-        continue;
+        debugPrint('Cropping failed for ${file.name} with error: $err');
+        throw Exception('Unable to Convert Image to PDF');
       }
 
       final Uint8List imageBytes = File(croppedImage!.path).readAsBytesSync();
 
       final PdfPage page = document.pages.add();
+      log('page: $page');
       final PdfImage image = PdfBitmap(imageBytes);
 
       page.graphics.drawImage(
@@ -117,15 +117,10 @@ class ImageUtils {
       );
     }
     final List<int> bytes = await document.save();
+
     document.dispose();
 
-    final dir = await getApplicationDocumentsDirectory();
-    final path =
-        '${dir.path}/image_to_pdf_${DateTime.now().millisecondsSinceEpoch}.pdf';
-    final file = File(path);
-    await file.writeAsBytes(bytes);
-
-    ref.read(imageToPdfProvider.notifier).setPdfPath([path]);
+    return Uint8List.fromList(bytes);
   }
 
   static Future<File?> cropImage(String imagePath) async {
