@@ -11,6 +11,7 @@ import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import '../../helpers/pdf_file_picker.dart';
 import '../../providers/action_history_provider.dart';
 import '../../providers/pdf_state_provider.dart';
+import '../../services/pdf_services.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/helper_methods.dart';
 import '../../utils/pdf_util.dart';
@@ -32,6 +33,8 @@ class _SplitPdfScreenState extends ConsumerState<SplitPdfScreen> {
   final TextEditingController _splitPointsController = TextEditingController();
   final TextEditingController _searchController = TextEditingController();
   final PdfViewerController _pdfViewerController = PdfViewerController();
+
+  bool isLoading = false;
 
   bool _showSearchField = false;
 
@@ -163,6 +166,7 @@ class _SplitPdfScreenState extends ConsumerState<SplitPdfScreen> {
                   ),
                 SubmitButton(
                   title: 'Split PDF',
+                  isLoading: isLoading,
                   onPressed:
                       () => _splitPDFs(context, _splitPointsController, ref),
                 ),
@@ -235,7 +239,6 @@ class _SplitPdfScreenState extends ConsumerState<SplitPdfScreen> {
           TextButton(
             onPressed: () async {
               if (controller.text.trim().isEmpty) {
-                setState(() {});
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     backgroundColor: Colors.red,
@@ -244,6 +247,7 @@ class _SplitPdfScreenState extends ConsumerState<SplitPdfScreen> {
                 );
                 return;
               }
+
               final pdfState = ref.watch(pdfSplitProvider);
               final pdfPaths = pdfState.pdfPaths;
               if (pdfPaths == null || pdfPaths.isEmpty) {
@@ -258,34 +262,33 @@ class _SplitPdfScreenState extends ConsumerState<SplitPdfScreen> {
 
               final String pdfPath = pdfState.pdfPaths!.first;
               final int fileSize = await File(pdfPath).length();
-
+              context.pop();
+              setState(() {
+                isLoading = true;
+              });
               try {
                 if (fileSize <= maxFileSizeForFrontend) {
                   // process in frontend
-                  final List<Uint8List> splitBytes = await PdfUtil.splitPdf(
+                  // final List<Uint8List> splitBytes = await PdfUtil.splitPdf(
+                  //   pdfPath,
+                  //   _splitPointsController.text.trim(),
+                  // );
+
+                  final File responseFile = await PdfServices().splitPdfs(
                     pdfPath,
                     _splitPointsController.text.trim(),
                   );
-                  final savedPaths = await HelperMethods.fileSave(
-                    splitBytes.first,
-                  );
-                  // await HelperMethods.saveMultipleFiles(
-                  //   splitBytes,
-                  //   'split',
-                  // );
+                  final splittedPdf = await responseFile.readAsBytes();
+                  final savedPaths = await HelperMethods.fileSave(splittedPdf);
+
                   ref
                       .read(actionHistoryProvider.notifier)
                       .addAction('Split PDFs (Frontend)');
                   if (savedPaths.isNotEmpty) {
-                    // Update the viewed PDF to the first split file
                     ref.read(pdfStateProvider.notifier).setPdfPath([
                       savedPaths,
                     ]);
 
-                    // update the selectedPDFs to only include the split files
-                    // ref.read(pdfStateProvider.notifier).state = ref
-                    //     .read(pdfStateProvider)
-                    //     .copyWith(selectedPdfs: savedPaths.toSet());
                     notifier.setSelectedPdfs([savedPaths]);
 
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -323,6 +326,10 @@ class _SplitPdfScreenState extends ConsumerState<SplitPdfScreen> {
                     content: Text('Error: ${err.toString()}'),
                   ),
                 );
+              } finally {
+                setState(() {
+                  isLoading = false;
+                });
               }
             },
             child: Container(

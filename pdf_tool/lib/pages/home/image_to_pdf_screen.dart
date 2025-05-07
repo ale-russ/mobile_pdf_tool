@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
@@ -8,7 +9,9 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
 import '../../providers/pdf_state_provider.dart';
+import '../../services/pdf_services.dart';
 import '../../utils/app_colors.dart';
+import '../../utils/helper_methods.dart';
 import '../../utils/image_utils.dart';
 import '../../widgets/add_button.dart';
 import '../../widgets/save_file_icon_widget.dart';
@@ -45,9 +48,13 @@ class _ImageToPdfScreenState extends ConsumerState<ImageToPdfScreen> {
       return;
     }
 
-    final result = await ImageUtils.imageToPdf();
+    // final result = await ImageUtils.imageToPdf();
+    final response = await PdfServices().convertImageToPdf();
 
-    ref.read(imageToPdfProvider.notifier).setPdfBytes(result);
+    final result = await response.readAsBytes();
+    final savedPath = await HelperMethods.fileSave(result);
+    // ref.read(imageToPdfProvider.notifier).setPdfBytes(result);
+    ref.read(imageToPdfProvider.notifier).setPdfPath([savedPath]);
 
     setState(() {
       isLoading = false;
@@ -57,7 +64,7 @@ class _ImageToPdfScreenState extends ConsumerState<ImageToPdfScreen> {
   @override
   Widget build(BuildContext context) {
     final pdfState = ref.watch(imageToPdfProvider);
-
+    log('pdfState: ${pdfState.pdfBytes}');
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -95,7 +102,9 @@ class _ImageToPdfScreenState extends ConsumerState<ImageToPdfScreen> {
         ),
         body: Stack(
           children: [
-            (pdfState.pdfBytes == null || pdfState.pdfBytes!.isEmpty)
+            isLoading
+                ? Center(child: CircularProgressIndicator())
+                : (pdfState.pdfBytes == null || pdfState.pdfBytes!.isEmpty)
                 ? Center(
                   child: Text(
                     'No File Loaded',
@@ -106,11 +115,10 @@ class _ImageToPdfScreenState extends ConsumerState<ImageToPdfScreen> {
                     ),
                   ),
                 )
-                : isLoading
-                ? Center(child: CircularProgressIndicator())
-                : SfPdfViewer.memory(
+                : SfPdfViewer.file(
                   key: _pdfViewerKey,
-                  pdfState.pdfBytes!,
+                  // pdfState.pdfBytes!,
+                  File(pdfState.pdfPaths!.first),
                   onDocumentLoaded: (details) {
                     ref
                         .read(imageToPdfProvider.notifier)
