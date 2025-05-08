@@ -24,3 +24,8 @@ final pdfMergeProvider = StateNotifierProvider<PdfMergeNotifier, PdfState>(
 final imageToPdfProvider = StateNotifierProvider<ImageToPdfNotifier, PdfState>(
   (ref) => ImageToPdfNotifier(),
 );
+
+final extractTextFromImageProvider =
+    StateNotifierProvider<ExtractTextFromImageNotifier, PdfState>(
+      (ref) => ExtractTextFromImageNotifier(),
+    );

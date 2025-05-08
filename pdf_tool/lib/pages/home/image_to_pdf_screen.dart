@@ -29,42 +29,57 @@ class _ImageToPdfScreenState extends ConsumerState<ImageToPdfScreen> {
   bool isLoading = false;
   @override
   void initState() {
-    convertImagesToPdf(context);
+    // convertImagesToPdf(context);
     super.initState();
   }
 
   Future<void> convertImagesToPdf(BuildContext context) async {
+    if (!mounted) return;
     setState(() {
       isLoading = true;
     });
-    await Permission.camera.request();
-    if (!await Permission.camera.request().isGranted) {
+    try {
+      if (await HelperMethods.requestCameraPermission()) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: Colors.red,
+            content: Text("Storage Permission Denied"),
+          ),
+        );
+        return;
+      }
+
+      // final result = await ImageUtils.imageToPdf();
+      final response = await PdfServices().convertImageToPdf();
+      log('response: $response');
+      final result = await response.readAsBytes();
+      final savedPath = await HelperMethods.fileSave(result);
+      log('savedPath: $savedPath');
+      // ref.read(imageToPdfProvider.notifier).setPdfBytes(result);
+      ref.read(imageToPdfProvider.notifier).setPdfPath([savedPath]);
+      log('processedImages: ${ref.watch(imageToPdfProvider).pdfPaths!.first}');
+      setState(() {});
+    } catch (err) {
+      log("Error: $err");
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           backgroundColor: Colors.red,
-          content: Text("Storage Permission Denied"),
+          content: Text("Error converting images to PDF: $err"),
         ),
       );
-      return;
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
     }
-
-    // final result = await ImageUtils.imageToPdf();
-    final response = await PdfServices().convertImageToPdf();
-
-    final result = await response.readAsBytes();
-    final savedPath = await HelperMethods.fileSave(result);
-    // ref.read(imageToPdfProvider.notifier).setPdfBytes(result);
-    ref.read(imageToPdfProvider.notifier).setPdfPath([savedPath]);
-
-    setState(() {
-      isLoading = false;
-    });
   }
 
   @override
   Widget build(BuildContext context) {
     final pdfState = ref.watch(imageToPdfProvider);
-    log('pdfState: ${pdfState.pdfBytes}');
+    log('pdfState: ${pdfState.pdfPaths}');
+    log('isLoading: $isLoading');
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -79,32 +94,32 @@ class _ImageToPdfScreenState extends ConsumerState<ImageToPdfScreen> {
             icon: Icon(Icons.arrow_back),
           ),
           elevation: 0.5,
-          actions: [
-            SaveFileIconWidget(
-              backgroundColor: Color(0xffF8F2F1),
-              icon: Icon(Icons.bookmark, color: Color(0xff9A5943)),
-              onPressed: () async {
-                final path = await FilePicker.platform.saveFile(
-                  dialogTitle: 'Save PDF',
-                  type: FileType.custom,
-                  fileName: 'converted_pdf.pdf',
-                  allowedExtensions: ['pdf'],
-                  bytes: pdfState.pdfBytes,
-                );
-                if (!mounted) return;
-                if (path != null) {
-                  final file = File(path);
-                  await file.writeAsBytes(pdfState.pdfBytes as List<int>);
-                }
-              },
-            ),
-          ],
+          // actions: [
+          //   SaveFileIconWidget(
+          //     backgroundColor: Color(0xffF8F2F1),
+          //     icon: Icon(Icons.bookmark, color: Color(0xff9A5943)),
+          //     onPressed: () async {
+          //       final path = await FilePicker.platform.saveFile(
+          //         dialogTitle: 'Save PDF',
+          //         type: FileType.custom,
+          //         fileName: 'converted_pdf.pdf',
+          //         allowedExtensions: ['pdf'],
+          //         bytes: pdfState.pdfBytes,
+          //       );
+          //       if (!mounted) return;
+          //       if (path != null) {
+          //         final file = File(path);
+          //         await file.writeAsBytes(pdfState.pdfBytes as List<int>);
+          //       }
+          //     },
+          //   ),
+          // ],
         ),
         body: Stack(
           children: [
             isLoading
                 ? Center(child: CircularProgressIndicator())
-                : (pdfState.pdfBytes == null || pdfState.pdfBytes!.isEmpty)
+                : (pdfState.pdfPaths == null || pdfState.pdfPaths!.isEmpty)
                 ? Center(
                   child: Text(
                     'No File Loaded',

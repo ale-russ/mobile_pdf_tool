@@ -9,6 +9,7 @@ class PdfState {
   final Set<String> selectedPdfs;
   final String? splitPdfPath;
   final Uint8List? pdfBytes;
+  final String? extractedText;
 
   PdfState({
     this.pdfPaths,
@@ -17,6 +18,7 @@ class PdfState {
     this.selectedPdfs = const <String>{},
     this.splitPdfPath = '',
     this.pdfBytes,
+    this.extractedText = "",
   });
 
   PdfState copyWith({
@@ -26,6 +28,7 @@ class PdfState {
     Set<String>? selectedPdfs,
     String? splitPdfPath,
     Uint8List? pdfBytes,
+    String? extractedText,
   }) {
     return PdfState(
       pdfPaths: pdfPaths ?? this.pdfPaths,
@@ -34,6 +37,7 @@ class PdfState {
       selectedPdfs: selectedPdfs ?? this.selectedPdfs,
       splitPdfPath: splitPdfPath ?? this.splitPdfPath,
       pdfBytes: pdfBytes ?? this.pdfBytes,
+      extractedText: extractedText ?? this.extractedText,
     );
   }
 }
@@ -79,4 +83,11 @@ class ImageToPdfNotifier extends PdfStateNotifier {
   void setPdfBytes(Uint8List pdfBytes) =>
       state = state.copyWith(pdfBytes: pdfBytes);
   void clearImages() => state = state.copyWith(pdfBytes: null);
+}
+
+class ExtractTextFromImageNotifier extends PdfStateNotifier {
+  ExtractTextFromImageNotifier() : super();
+
+  void setExtractedText(String text) =>
+      state = state.copyWith(extractedText: text);
 }

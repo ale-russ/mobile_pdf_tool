@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:pdf_tool/pages/home/extract_text_screen.dart';
 import 'package:pdf_tool/pages/home/home.dart';
 import 'package:pdf_tool/pages/home/pdf_editor_screen.dart';
 
@@ -45,6 +46,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: '/image-pdf',
                 builder: (context, state) => ImageToPdfScreen(),
+              ),
+              GoRoute(
+                path: '/extract-text-from-image',
+                builder: (context, state) => ExtractTextScreen(),
               ),
               GoRoute(
                 path: '/success',

@@ -1,18 +1,19 @@
-import pikepdf
-import pdfplumber
-import fitz
-import os
-import boto3
 from fastapi import FastAPI, File, UploadFile, HTTPException, Form, BackgroundTasks
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, JSONResponse
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
 from docx import Document
 from PIL import Image
 from PIL.Image import Resampling
 from typing import List
+import pikepdf
+import pdfplumber
+import fitz
+import os
+import boto3
 import io
 import uuid
+import pytesseract
 
 app = FastAPI()
 
@@ -25,6 +26,7 @@ S3_BUCKET = 'your-s3-bucket-name'
 s3_client = boto3.client('s3')
 
 # Helper function to save uplaoded file
+
 
 def cleanup_file(path: str):
     if os.path.exists(path):
@@ -39,11 +41,15 @@ async def save_uploaded_file(uploaded_file: UploadFile) -> str:
     return file_path
 
 # Helper function to upload file to S3 (Online mode)
+
+
 def upload_to_s3(file_path: str, filename: str):
     s3_client.upload_file(file_path, S3_BUCKET, filename)
     return f'https://{S3_BUCKET}.s3.amazonaws.com/{filename}'
 
 # Merge PDF files
+
+
 @app.post("/merge")
 async def merge_pdfs(files: List[UploadFile] = File(...)):
     if not files:
@@ -67,6 +73,8 @@ async def merge_pdfs(files: List[UploadFile] = File(...)):
     return FileResponse(output_path, media_type="application/pdf", filename="merged.pdf")
 
 # Split PDF files
+
+
 @app.post("/split")
 async def split_pdf(file: UploadFile = File(...), pages: str = Form("")):
     file_path = await save_uploaded_file(file)
@@ -192,6 +200,8 @@ async def extract_pages(file: UploadFile = File(...), pages: str = "1"):
     return {"message": "Pages Extracted", "files": output_files}
 
 # Create PDF
+
+
 @app.post("/create-pdf")
 async def create_pdf(text: str = "Sample PDF"):
     output_path = os.path.jion(TEMP_DIR, "created.pdf")
@@ -205,6 +215,8 @@ async def create_pdf(text: str = "Sample PDF"):
     return FileResponse(output_path, media_type="application/pdf", filename="created.pdf")
 
 # Edit PDF (Add text Annotation)
+
+
 @app.post("/edit-pdf")
 async def edit_pdf(file: UploadFile = File(...), text: str = "Annotation", x: int = 100, y: int = 100):
     file_path = await save_uploaded_file(file)
@@ -223,6 +235,8 @@ async def edit_pdf(file: UploadFile = File(...), text: str = "Annotation", x: in
     return FileResponse(output_path, media_type="application/pdf", filename="edited.pdf")
 
 # Add Image to PDF
+
+
 @app.post("/add-image-to-pdf")
 async def add_image(file: UploadFile = File(...), image: UploadFile = File(...), page_num: int = 1, x: int = 100, y: int = 100):
     file_path = await save_uploaded_file(file)
@@ -250,6 +264,8 @@ async def add_image(file: UploadFile = File(...), image: UploadFile = File(...),
     return FileResponse(output_path, media_type="application/pdf", filename="image_added.pdf")
 
 # Remove Image from PDF (Basid: Remove first image and specified page)
+
+
 @app.post("/remove-image")
 async def remove_image(file: UploadFile = File(...), page_num: int = 1):
     file_path = await save_uploaded_file(file)
@@ -277,6 +293,8 @@ async def remove_image(file: UploadFile = File(...), page_num: int = 1):
     return FileResponse(output_path, media_type="application/pdf", filename="image_removed.pdf")
 
 # Extra Text
+
+
 @app.post("/extract-text")
 async def extract_text(file: UploadFile = File(...)):
     file_path = await save_uploaded_file(file)
@@ -291,6 +309,8 @@ async def extract_text(file: UploadFile = File(...)):
     return {"message": "Text extracted successfully", "text": "\n".join(extracted_text)}
 
 # Extract Images
+
+
 @app.post("/extract-images")
 async def extract_images(file: UploadFile = File(...)):
     file_path = await save_uploaded_file(file)
@@ -320,6 +340,8 @@ async def extract_images(file: UploadFile = File(...)):
     return {"message": "Images extracted successfully", "files": output_files}
 
 # Encrypt PDF
+
+
 @app.post("/encrypt")
 async def encrypt_pdf(file: UploadFile = File(...), password: str = "password"):
     file_path = await save_uploaded_file(file)
@@ -336,33 +358,33 @@ async def encrypt_pdf(file: UploadFile = File(...), password: str = "password"):
 
 
 # Convert Image to PDF
-@app.post("/convert-image-to-pdf")
-async def convert_image_to_pdf(files: List[UploadFile] = File(...), background_tasks:BackgroundTasks = BackgroundTasks):
-    A4_WIDTH, A4_HEIGHT = 595, 842 
+@app.post("/image-to-pdf")
+async def convert_image_to_pdf(files: List[UploadFile] = File(...), background_tasks: BackgroundTasks = BackgroundTasks):
+    A4_WIDTH, A4_HEIGHT = 595, 842
+
     if not files:
         raise HTTPException(status_code=400, detail="No images provided.")
 
     pages = []
-    
+
     for file in files:
         if not file.content_type.startswith("image/"):
-            raise HTTPException(status_code=400, detail=f"{file.filename} is not a valid image.")
-        
-        
-        
+            raise HTTPException(
+                status_code=400, detail=f"{file.filename} is not a valid image.")
+
         image_data = await file.read()
         image = Image.open(io.BytesIO(image_data)).convert("RGB")
-        
+
         # Create an A4 with white background
         page = Image.new("RGB", (A4_WIDTH, A4_HEIGHT), "white")
-        
+
         # get coordinates to past the image at the center
         offset_x = (A4_WIDTH - image.width) // 2
         offset_y = (A4_HEIGHT - image.height) // 2
-        
+
         # past image onto the A4 canvas (centered)
         page.paste(image, (offset_x, offset_y))
-        
+
         pages.append(page)
 
     output_path = os.path.join(TEMP_DIR, f"{uuid.uuid4()}.pdf")
@@ -371,5 +393,32 @@ async def convert_image_to_pdf(files: List[UploadFile] = File(...), background_t
     print(f'return is: {image.info}, output: {output_path}')
     return FileResponse(output_path, media_type="application/pdf", filename="converted.pdf")
 
-    
-    
+
+# Extract text from image
+@app.post("/extract-text-from-image")
+async def extract_text_from_image(file: UploadFile = File(...)):
+    if not file.content_type.startswith("image/"):
+        raise HTTPException(
+            status_code=400, detail=f"{file.filename} is not a valid image file")
+
+    try:
+        # Read the image data
+        image_data = await file.read()
+        image = Image.open(io.BytesIO(image_data)).convert("RGB")
+
+        # Enhance image for better OCR (optional preprocessing)
+        image = image.convert("L")  # Convert to grayscale
+        image = image.point(lambda x: 0 if x <
+                            128 else 255, '1')  # Binarization
+
+        # Extract text using Tesseract
+        extracted_text = pytesseract.image_to_string(image)
+
+        if not extracted_text.strip():
+            raise HTTPException(
+                status_code=400, detail="No text detected in the image")
+
+        return JSONResponse(content={"text": extracted_text})
+    except Exception as err:
+        raise HTTPException(
+            status_code=500, detail=f"Error extracting text: {str(err)}")

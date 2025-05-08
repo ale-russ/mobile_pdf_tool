@@ -14,6 +14,7 @@ import '../providers/pdf_state_provider.dart';
 import 'recent_file_storage.dart';
 
 class HelperMethods {
+  static final int maxFileSizeForFrontend = 5 * 1024 * 1024;
   static void pickFiles(WidgetRef ref) async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.any,
@@ -90,9 +91,11 @@ class HelperMethods {
   static Future<bool> requestCameraPermission() async {
     var status = await Permission.camera.status;
     if (!status.isGranted) {
-      status = await Permission.camera.request();
+      await Permission.camera.request();
+      return status.isGranted;
+    } else {
+      return status.isDenied;
     }
-    return status.isGranted;
   }
 
   // save a single File
@@ -111,9 +114,6 @@ class HelperMethods {
       }
 
       log('Directory in save file: $directory');
-      // if (await directory.exists()) {
-      //   await directory.create(recursive: true);
-      // }
 
       final String path = '${directory.path}/$fileName.pdf';
       final File file = File(path);
@@ -139,6 +139,7 @@ class HelperMethods {
       fileName: 'new_pdf.pdf',
       bytes: bytes,
     );
+    log('path: $path');
     if (path != null) {
       final file = File(path);
       await file.writeAsBytes(bytes, flush: true);

@@ -5,10 +5,10 @@ packages:
     dependency: transitive
     description:
       name: archive
-      sha256: a7f37ff061d7abc2fcf213554b9dcaca713c5853afa5c065c44888bc9ccaf813
+      sha256: "2fde1607386ab523f7a36bb3e7edb43bd58e6edaf2ffb29d8a6d578b297fdbbd"
       url: "https://pub.dev"
     source: hosted
-    version: "4.0.6"
+    version: "4.0.7"
   args:
     dependency: transitive
     description:
@@ -61,18 +61,18 @@ packages:
     dependency: transitive
     description:
       name: camera_android_camerax
-      sha256: "26673643ed8f4a468a81ebd7ca760bc1d8c4c741df6d731cc958585ac1983126"
+      sha256: f0dcbce91623f75030840609de9b64d0d73f86df279c6e9588c1501245a05eb2
       url: "https://pub.dev"
     source: hosted
-    version: "0.6.15"
+    version: "0.6.15+2"
   camera_avfoundation:
     dependency: transitive
     description:
       name: camera_avfoundation
-      sha256: a33cd9a250296271cdf556891b7c0986a93772426f286595eccd5f45b185933c
+      sha256: ca36181194f429eef3b09de3c96280f2400693f9735025f90d1f4a27465fdd72
       url: "https://pub.dev"
     source: hosted
-    version: "0.9.18+14"
+    version: "0.9.19"
   camera_platform_interface:
     dependency: transitive
     description:
@@ -149,10 +149,10 @@ packages:
     dependency: transitive
     description:
       name: device_info_plus
-      sha256: "306b78788d1bb569edb7c55d622953c2414ca12445b41c9117963e03afc5c513"
+      sha256: "0c6396126421b590089447154c5f98a5de423b70cfb15b1578fd018843ee6f53"
       url: "https://pub.dev"
     source: hosted
-    version: "11.3.3"
+    version: "11.4.0"
   device_info_plus_platform_interface:
     dependency: transitive
     description:
@@ -214,10 +214,10 @@ packages:
     dependency: "direct main"
     description:
       name: file_picker
-      sha256: "8986dec4581b4bcd4b6df5d75a2ea0bede3db802f500635d05fa8be298f9467f"
+      sha256: "978be1f602e0695daef8e345a3c597abf72b0c0ca6102fa2665eb549f5406a17"
       url: "https://pub.dev"
     source: hosted
-    version: "10.1.2"
+    version: "10.1.5"
   file_selector_linux:
     dependency: transitive
     description:
@@ -275,10 +275,10 @@ packages:
     dependency: transitive
     description:
       name: flutter_plugin_android_lifecycle
-      sha256: "5a1e6fb2c0561958d7e4c33574674bda7b77caaca7a33b758876956f2902eea3"
+      sha256: f948e346c12f8d5480d2825e03de228d0eb8c3a737e4cdaa122267b89c022b5e
       url: "https://pub.dev"
     source: hosted
-    version: "2.0.27"
+    version: "2.0.28"
   flutter_riverpod:
     dependency: "direct main"
     description:
@@ -317,10 +317,26 @@ packages:
     dependency: "direct main"
     description:
       name: go_router
-      sha256: "4cdfcc6a178632d1dbb7a728f8e84a1466211354704b9cdc03eee661d3277732"
+      sha256: "2b9ba6d4c247457c35a6622f1dee6aab6694a4e15237ff7c32320345044112b6"
       url: "https://pub.dev"
     source: hosted
-    version: "15.0.0"
+    version: "15.1.1"
+  google_ml_kit:
+    dependency: "direct main"
+    description:
+      name: google_ml_kit
+      sha256: a2da12a62353a6cad71534b52ada3af14a5b842e6c9b1014ce4d243652b30f4b
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.20.0"
+  google_mlkit_barcode_scanning:
+    dependency: transitive
+    description:
+      name: google_mlkit_barcode_scanning
+      sha256: b38505df2d3fdf7830979d60fee55039c2f442d189b2e06fcb2fe494ba65d0db
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.14.1"
   google_mlkit_commons:
     dependency: transitive
     description:
@@ -329,6 +345,86 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.11.0"
+  google_mlkit_digital_ink_recognition:
+    dependency: transitive
+    description:
+      name: google_mlkit_digital_ink_recognition
+      sha256: "8d2b89401bdeeba97158377167429dbc5cb339ebbd21e0889dca773f1c79a884"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.14.1"
+  google_mlkit_entity_extraction:
+    dependency: transitive
+    description:
+      name: google_mlkit_entity_extraction
+      sha256: "145bc26422b7e62d50cc4eca1ac394d13ac6a97e4c09b8baf7ff058b64d2f9cc"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.15.1"
+  google_mlkit_face_detection:
+    dependency: transitive
+    description:
+      name: google_mlkit_face_detection
+      sha256: f336737d5b8a86797fd4368f42a5c26aeaa9c6dcc5243f0a16b5f6f663cfb70a
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.13.1"
+  google_mlkit_face_mesh_detection:
+    dependency: transitive
+    description:
+      name: google_mlkit_face_mesh_detection
+      sha256: "3683daed2463d9631c7f01b31bfc40d22a1fd4c0392d82a24ce275af06bc811f"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.4.1"
+  google_mlkit_image_labeling:
+    dependency: transitive
+    description:
+      name: google_mlkit_image_labeling
+      sha256: "2cac5f7a02dcc23cd3357f89bf1a79df793ae3afce5035a896de467ffa0192e8"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.14.1"
+  google_mlkit_language_id:
+    dependency: transitive
+    description:
+      name: google_mlkit_language_id
+      sha256: fc57bca69cb1dcd8ef67b929f0315e9a8baa80c03c75f7a1226becd7ad2529ff
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.13.0"
+  google_mlkit_object_detection:
+    dependency: transitive
+    description:
+      name: google_mlkit_object_detection
+      sha256: "0f740f046d74faf81d9c44cdbe4accf33888ed9f877e30efbfad4578d45ebfcd"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.15.0"
+  google_mlkit_pose_detection:
+    dependency: transitive
+    description:
+      name: google_mlkit_pose_detection
+      sha256: "5ff5fe2a325427c49c02a884a2a888d2d10cbfe414f7ebf2af9777a5155171eb"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.14.0"
+  google_mlkit_selfie_segmentation:
+    dependency: transitive
+    description:
+      name: google_mlkit_selfie_segmentation
+      sha256: e05fc255265595a0fb11cd6a6a5393f106d6ec4d3a40cbc57ff22894eef235f1
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.10.0"
+  google_mlkit_smart_reply:
+    dependency: transitive
+    description:
+      name: google_mlkit_smart_reply
+      sha256: "0c3d737e46f20aa4d4953860ee5757e5250e58f90351f8e2afdeb1d609c7047e"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.13.0"
   google_mlkit_text_recognition:
     dependency: "direct main"
     description:
@@ -337,14 +433,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.15.0"
+  google_mlkit_translation:
+    dependency: transitive
+    description:
+      name: google_mlkit_translation
+      sha256: "7287444a0abd994087a0b354dee952fcd198e57619ded4bba65496d418c9d84b"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.13.0"
   http:
     dependency: "direct main"
     description:
       name: http
-      sha256: fe7ab022b76f3034adc518fb6ea04a82387620e19977665ea18d30a1cf43442f
+      sha256: "2c11f3f94c687ee9bad77c171151672986360b2b001d109814ee7140b2cf261b"
       url: "https://pub.dev"
     source: hosted
-    version: "1.3.0"
+    version: "1.4.0"
   http_parser:
     dependency: "direct main"
     description:
@@ -489,6 +593,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "5.1.1"
+  logger:
+    dependency: "direct main"
+    description:
+      name: logger
+      sha256: be4b23575aac7ebf01f225a241eb7f6b5641eeaf43c6a8613510fc2f8cf187d1
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.5.0"
   logging:
     dependency: transitive
     description:
@@ -890,66 +1002,66 @@ packages:
     dependency: transitive
     description:
       name: syncfusion_flutter_core
-      sha256: "98580db6186b46aae965d3f480f7830b0ee6f58c4e1bbbb3fb3de6a121f61836"
+      sha256: "4fb16cf25fa56f787f3991bbdea6241512a81cdbfad4255452f3fd01b7d5fb25"
       url: "https://pub.dev"
     source: hosted
-    version: "29.1.38"
+    version: "29.1.41"
   syncfusion_flutter_pdf:
     dependency: "direct main"
     description:
       name: syncfusion_flutter_pdf
-      sha256: c9cca8a538e3001270e64e2e1e5d70f32cfb465c7e420da1dffb2ed1878151cc
+      sha256: "3646afbc7c1eb5b1c2d97bdf49ac0225416ce63add1b244c0a424030be5a1988"
       url: "https://pub.dev"
     source: hosted
-    version: "29.1.38"
+    version: "29.1.41"
   syncfusion_flutter_pdfviewer:
     dependency: "direct main"
     description:
       name: syncfusion_flutter_pdfviewer
-      sha256: a3824736dac3665a58b3e3878010ad1e538e30b9838e0ad56fa0a08322610c77
+      sha256: b75b27ea0bca4a41b5bfc89b9384bdd6d00de31642e38c54c75265060347557e
       url: "https://pub.dev"
     source: hosted
-    version: "29.1.38"
+    version: "29.1.41"
   syncfusion_flutter_signaturepad:
     dependency: transitive
     description:
       name: syncfusion_flutter_signaturepad
-      sha256: ee34654e76ef690598c6331596b2e561b0fd79ea0cbd9a56d65fd7be1ae903f3
+      sha256: "98c6ea73de5612906f86c6e38004a0ddbc84f9c7188517ce76d4c6dc37e14e7e"
       url: "https://pub.dev"
     source: hosted
-    version: "29.1.38"
+    version: "29.1.41"
   syncfusion_pdfviewer_macos:
     dependency: transitive
     description:
       name: syncfusion_pdfviewer_macos
-      sha256: "190cf6ec8f7e01cfabe6feab418bb39369f2d32738efe13aa99025e528342f67"
+      sha256: af0b6df374f8eec80f6c1c3032c8c24b758ada492aa7d867a235eed89e8cf055
       url: "https://pub.dev"
     source: hosted
-    version: "29.1.38"
+    version: "29.1.41"
   syncfusion_pdfviewer_platform_interface:
     dependency: transitive
     description:
       name: syncfusion_pdfviewer_platform_interface
-      sha256: "08e57fd5f290d06a901528df73a4b5d81e17bf8413ba9cf019efd455301d0436"
+      sha256: "68050ecf97042e8a74474d4ac8309d1c95ba0f04b02c9710191500f02b75cd98"
       url: "https://pub.dev"
     source: hosted
-    version: "29.1.38"
+    version: "29.1.41"
   syncfusion_pdfviewer_web:
     dependency: transitive
     description:
       name: syncfusion_pdfviewer_web
-      sha256: f00f60b7f0db51c7f9869b9affc8c08aa079fc8eb31ae8154c661b7f1e0bfd85
+      sha256: "9ea5669c1f50b3867cc0e8c80fb61e9fdacbf7321298cbad1dead2c5ab2fe42a"
       url: "https://pub.dev"
     source: hosted
-    version: "29.1.38"
+    version: "29.1.41"
   syncfusion_pdfviewer_windows:
     dependency: transitive
     description:
       name: syncfusion_pdfviewer_windows
-      sha256: f4fa856c08b79b8a0e3d32e46d86a1b3dfd2aacec928c971089c44f31dcefac3
+      sha256: "8cb6962c20b4f019f80dfd0461c9bc4ff2ec82d401c7aea4df0f2e923f967329"
       url: "https://pub.dev"
     source: hosted
-    version: "29.1.38"
+    version: "29.1.41"
   term_glyph:
     dependency: transitive
     description:
@@ -986,10 +1098,10 @@ packages:
     dependency: transitive
     description:
       name: url_launcher_android
-      sha256: "1d0eae19bd7606ef60fe69ef3b312a437a16549476c42321d5dc1506c9ca3bf4"
+      sha256: "8582d7f6fe14d2652b4c45c9b6c14c0b678c2af2d083a11b604caeba51930d79"
       url: "https://pub.dev"
     source: hosted
-    version: "6.3.15"
+    version: "6.3.16"
   url_launcher_ios:
     dependency: transitive
     description:
@@ -1026,10 +1138,10 @@ packages:
     dependency: transitive
     description:
       name: url_launcher_web
-      sha256: "3ba963161bd0fe395917ba881d320b9c4f6dd3c4a233da62ab18a5025c85f1e9"
+      sha256: "4bd2b7b4dc4d4d0b94e5babfffbca8eac1a126c7f3d6ecbc1a11013faa3abba2"
       url: "https://pub.dev"
     source: hosted
-    version: "2.4.0"
+    version: "2.4.1"
   url_launcher_windows:
     dependency: transitive
     description:

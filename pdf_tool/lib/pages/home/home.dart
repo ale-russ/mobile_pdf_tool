@@ -106,8 +106,10 @@ class HomeScreen extends ConsumerWidget {
                     BuildActionCard(
                       context: context,
                       icon: 'assets/img/all_tools.svg',
-                      label: 'Document To PDF',
-                      onTap: () {},
+                      label: 'Extract Text From Image',
+                      // label: 'Document To PDF',
+                      onTap:
+                          () => context.push("/home/extract-text-from-image"),
                       color: Color(0xffF0F5FC),
                       iconColor: Color(0xff5571FF),
                     ),

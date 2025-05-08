@@ -73,36 +73,54 @@ class PdfServices {
 
     if (result == null) throw Exception('No File Selected');
 
-    for (var file in result.files) {
+    for (int i = 0; i < result.files.length; i++) {
+      final file = result.files[i];
       CroppedFile? croppedImage;
       final mimeType = lookupMimeType(file.path!);
+      log('mimeType: $mimeType');
       final contentType =
           mimeType != null
               ? MediaType.parse(mimeType)
               : MediaType('application', 'octet-stream');
-      croppedImage = await ImageCropper.platform.cropImage(
+      // croppedImage = await ImageCropper.platform.cropImage(
+      //   sourcePath: file.path!,
+      // );
+      croppedImage = await ImageCropper().cropImage(
         sourcePath: file.path!,
-      );
-      formData.files.add(
-        MapEntry(
-          "files",
-          await MultipartFile.fromFile(
-            // file.path!,
-            croppedImage!.path,
-            filename: file.name,
-            contentType: contentType,
+        // aspectRatio: CropAspectRatioPreset.square as CropAspectRatio,
+        uiSettings: [
+          AndroidUiSettings(
+            toolbarTitle: 'Crop Image',
+            initAspectRatio: CropAspectRatioPreset.original,
+            lockAspectRatio: false,
           ),
-        ),
+        ],
       );
+      if (croppedImage != null) {
+        formData.files.add(
+          MapEntry(
+            "files",
+            await MultipartFile.fromFile(
+              // file.path!,
+              croppedImage.path,
+              filename: file.name,
+              contentType: contentType,
+            ),
+          ),
+        );
+      }
     }
 
     try {
       final response = await dio.post(
-        '$baseUrl/convert-image-to-pdf',
+        '$baseUrl/image-to-pdf',
         data: formData,
         options: Options(responseType: ResponseType.bytes),
       );
-      return await saveTempFile(response, 'image');
+
+      final savedFile = await saveTempFile(response, 'image');
+      log('savedFile: $savedFile');
+      return savedFile;
     } catch (err) {
       log('Error: $err');
       throw Exception('Internal Server Error');
@@ -132,6 +150,38 @@ class PdfServices {
         errorMessage = 'Error converting to Word: $err';
       }
       return errorMessage;
+    }
+  }
+
+  Future<String?> extractTextFromImage(File file) async {
+    try {
+      final mimeType = lookupMimeType(file.path);
+      final contentType =
+          mimeType != null
+              ? MediaType.parse(mimeType)
+              : MediaType('application', 'octet-stream');
+
+      formData.files.add(
+        MapEntry(
+          'file',
+          await MultipartFile.fromFile(file.path, contentType: contentType),
+        ),
+      );
+
+      final response = await dio.post(
+        "$baseUrl/extract-text-from-image",
+        data: formData,
+      );
+
+      if (response.statusCode == 200) {
+        final data = response.data as Map<String, dynamic>;
+        final text = data['text'] as String;
+        return text;
+      }
+      return null;
+    } catch (err) {
+      log('Error: $err');
+      rethrow;
     }
   }
 }
