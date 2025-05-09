@@ -64,11 +64,13 @@ class CircularAddButton extends ConsumerWidget {
     this.title,
     this.isAddPDF = true,
     this.onPressed,
+    this.icon,
   });
   final notifier;
   final String? title;
   final bool isAddPDF;
   final VoidCallback? onPressed;
+  final IconData? icon;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -86,7 +88,7 @@ class CircularAddButton extends ConsumerWidget {
           shape: const CircleBorder(),
           padding: EdgeInsets.zero,
         ),
-        child: Icon(Icons.add, size: 25, color: AppColors.white),
+        child: Icon(icon ?? Icons.add, size: 25, color: AppColors.white),
       ),
     );
   }

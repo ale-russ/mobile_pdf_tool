@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pdf_tool/pages/home/extract_text_screen.dart';
@@ -54,7 +56,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
               ),
               GoRoute(
                 path: '/sign-pdf',
-                builder: (context, state) => ESignScreen(pdfPath: ''),
+                builder: (context, state) {
+                  final pdfPath = state.extra;
+                  return ESignScreen(pdfPath: pdfPath.toString());
+                },
               ),
               GoRoute(
                 path: '/success',
