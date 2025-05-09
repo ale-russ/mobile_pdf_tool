@@ -66,6 +66,7 @@ dependencies:
   mime: ^2.0.0
   logger: ^2.5.0
   google_ml_kit: ^0.20.0
+  signature: ^6.0.0
 
   
   # permission_handler_web: ^0.0.2

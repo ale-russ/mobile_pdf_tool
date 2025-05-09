@@ -83,7 +83,7 @@ class HomeScreen extends ConsumerWidget {
                       context: context,
                       icon: 'assets/img/e-scan_pdf.svg',
                       label: 'E-Sign PDF',
-                      onTap: () {},
+                      onTap: () => context.push('/home/sign-pdf'),
                       color: Color(0xffFFF1F1),
                       iconColor: Color(0xffFDAA31),
                     ),

@@ -5,6 +5,7 @@ import 'package:pdf_tool/pages/home/home.dart';
 import 'package:pdf_tool/pages/home/pdf_editor_screen.dart';
 
 import '../pages/home/display_pdf.dart';
+import '../pages/home/e_sign_screen.dart';
 import '../pages/home/image_to_pdf_screen.dart';
 import '../pages/home/merge_pdf.dart';
 import '../pages/home/scan_pdf.dart';
@@ -50,6 +51,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: '/extract-text-from-image',
                 builder: (context, state) => ExtractTextScreen(),
+              ),
+              GoRoute(
+                path: '/sign-pdf',
+                builder: (context, state) => ESignScreen(pdfPath: ''),
               ),
               GoRoute(
                 path: '/success',

@@ -13,6 +13,7 @@ import 'package:path_provider/path_provider.dart';
 
 import '../../providers/pdf_state_provider.dart';
 import '../../utils/helper_methods.dart';
+import '../../widgets/submit_button.dart';
 
 class ExtractTextScreen extends ConsumerStatefulWidget {
   const ExtractTextScreen({super.key});
@@ -44,9 +45,12 @@ class _ExtractTextScreenState extends ConsumerState<ExtractTextScreen> {
       );
 
       if (result == null || result.files.isEmpty) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text("No Image Selected")));
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            backgroundColor: Colors.red,
+            content: Text("No Image Selected"),
+          ),
+        );
         return;
       }
 
@@ -71,44 +75,45 @@ class _ExtractTextScreenState extends ConsumerState<ExtractTextScreen> {
         return;
       }
 
-      if (HelperMethods.maxFileSizeForFrontend <= file.size) {
-        // Process the image for better OCR
-        final img.Image? processedImage = await _preprocessImage(
-          croppedImage.path,
+      // if (HelperMethods.maxFileSizeForFrontend <= file.size) {
+      // Process the image for better OCR
+      final img.Image? processedImage = await _preprocessImage(
+        croppedImage.path,
+      );
+
+      if (processedImage == null) {
+        throw Exception("Failed to process Image");
+      }
+
+      // Convert processed image to InputImage for ML Kit
+      final inputImage = InputImage.fromFilePath(croppedImage.path);
+
+      // Initialize TextRecognizer
+      final textReconizer = TextRecognizer(script: TextRecognitionScript.latin);
+      final RecognizedText recognizedText = await textReconizer.processImage(
+        inputImage,
+      );
+
+      // Extract Text
+      final text = recognizedText.text;
+      log.i('Extracted text: $text');
+
+      if (text.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            backgroundColor: Colors.red,
+            content: Text('No Text Detected In The Image'),
+          ),
         );
+        return;
+      }
 
-        if (processedImage == null) {
-          throw Exception("Failed to process Image");
-        }
+      setState(() {
+        extractedText = text;
+      });
 
-        // Convert processed image to InputImage for ML Kit
-        final inputImage = InputImage.fromFilePath(croppedImage.path);
-
-        // Initialize TextRecognizer
-        final textReconizer = TextRecognizer(
-          script: TextRecognitionScript.latin,
-        );
-        final RecognizedText recognizedText = await textReconizer.processImage(
-          inputImage,
-        );
-
-        // Extract Text
-        final text = recognizedText.text;
-        log.i('Extracted text: $text');
-
-        if (text.isEmpty) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('No Text Detected In The Image')),
-          );
-          return;
-        }
-
-        setState(() {
-          extractedText = text;
-        });
-
-        ref.read(extractTextFromImageProvider.notifier).setExtractedText(text);
-      } else {}
+      ref.read(extractTextFromImageProvider.notifier).setExtractedText(text);
+      // } else {}
     } catch (err) {
       log.e('Error: $err');
       if (mounted) {
@@ -153,6 +158,7 @@ class _ExtractTextScreenState extends ConsumerState<ExtractTextScreen> {
 
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.white,
         title: const Text('Extract Text From Image'),
         automaticallyImplyLeading: false,
         leading: IconButton(
@@ -183,9 +189,14 @@ class _ExtractTextScreenState extends ConsumerState<ExtractTextScreen> {
                       ),
                     ),
                     const SizedBox(height: 20),
-                    ElevatedButton(
-                      onPressed: extractTextFromImage,
-                      child: const Text('Extract Text'),
+
+                    SizedBox(
+                      width: 200,
+                      height: 70,
+                      child: SubmitButton(
+                        onPressed: extractTextFromImage,
+                        title: "Select File",
+                      ),
                     ),
                   ],
                 ),
@@ -205,34 +216,40 @@ class _ExtractTextScreenState extends ConsumerState<ExtractTextScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        ElevatedButton(
-                          onPressed: () {
-                            Clipboard.setData(
-                              ClipboardData(text: extractedText!),
-                            );
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text("Text copied to clipboard"),
-                              ),
-                            );
-                          },
-                          child: Text("Copy"),
-                        ),
-                        ElevatedButton(
-                          onPressed: () async {
-                            final path = await HelperMethods.fileSave(
-                              Uint8List.fromList(extractedText!.codeUnits),
-                            );
-
-                            if (path != null) {
+                        SizedBox(
+                          width: 175,
+                          child: SubmitButton(
+                            onPressed: () {
+                              Clipboard.setData(
+                                ClipboardData(text: extractedText!),
+                              );
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
-                                  content: Text("Text saved as File"),
+                                  content: Text("Text copied to clipboard"),
                                 ),
                               );
-                            }
-                          },
-                          child: Text('Save'),
+                            },
+                            title: "Copy",
+                          ),
+                        ),
+                        SizedBox(
+                          width: 175,
+                          child: SubmitButton(
+                            onPressed: () async {
+                              final path = await HelperMethods.fileSave(
+                                Uint8List.fromList(extractedText!.codeUnits),
+                              );
+
+                              if (path != null) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text("Text saved as File"),
+                                  ),
+                                );
+                              }
+                            },
+                            title: 'Save',
+                          ),
                         ),
                       ],
                     ),

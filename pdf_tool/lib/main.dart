@@ -5,6 +5,7 @@ import 'package:pdf_tool/routes/router.dart';
 
 import 'providers/theme_provider.dart';
 import 'utils/app_colors.dart';
+import 'utils/scaffold_uitiltiy.dart';
 
 void main() {
   runApp(ProviderScope(child: MyApp()));
@@ -12,6 +13,8 @@ void main() {
 
 class MyApp extends ConsumerWidget {
   const MyApp({super.key});
+
+  static final scaffoldMessenger = GlobalKey<ScaffoldMessengerState>();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -21,6 +24,7 @@ class MyApp extends ConsumerWidget {
     return MaterialApp.router(
       routerConfig: router,
       debugShowCheckedModeBanner: false,
+      scaffoldMessengerKey: GlobalScaffold.scaffoldMessengerKey,
       theme: ThemeData(
         useMaterial3: true,
         scaffoldBackgroundColor: AppColors.white,
