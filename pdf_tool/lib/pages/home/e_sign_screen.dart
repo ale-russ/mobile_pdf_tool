@@ -49,11 +49,17 @@ class _ESignScreenState extends ConsumerState<ESignScreen> {
       _document = PdfDocument(inputBytes: await pdfFile.readAsBytes());
     }
 
-    _controller.addListener(() {
-      if (_controller.points.isNotEmpty) {
+    // _controller.addListener(() {
+    //   if (_controller.points.isNotEmpty) {
+    //     _drawingHistory.add(List.from(_controller.points));
+    //   }
+    // });
+
+    _controller.onDrawEnd = () {
+      if (_controller.points.isEmpty) {
         _drawingHistory.add(List.from(_controller.points));
       }
-    });
+    };
 
     initializeDocument();
     super.initState();
@@ -91,12 +97,27 @@ class _ESignScreenState extends ConsumerState<ESignScreen> {
   }
 
   void _undoDrawing() {
+    // if (_drawingHistory.isNotEmpty) {
+    //   _drawingHistory.removeLast();
+    //   _controller.points = _drawingHistory.expand((e) => e).toList();
+    // } else {
+    //   _controller.clear();
+    // }
     setState(() {
-      _isDrawing = true;
-      _signatureImage = null;
+      log.i('drawing history: ${_drawingHistory.length}');
+      if (_drawingHistory.isNotEmpty) {
+        log.i('in if clause');
+        _drawingHistory.removeLast();
+        _controller.points = _drawingHistory.expand((e) => e).toList();
+      } else {
+        log.i('in else if clause');
+        _controller.clear();
+      }
+      // _isDrawing = true;
+      // _signatureImage = null;
     });
-    _controller.clear();
-    _drawingHistory.clear();
+    // _controller.clear();
+    // _drawingHistory.clear();
   }
 
   Future<void> _signPdf() async {
@@ -225,6 +246,34 @@ class _ESignScreenState extends ConsumerState<ESignScreen> {
       ),
       body: Column(
         children: [
+          Text(
+            'Page: $_currentPage/${_document.pages.count}',
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            textAlign: TextAlign.center,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              IconButton(
+                onPressed: () {
+                  setState(() {
+                    if (_currentPage > 1) _currentPage--;
+                  });
+                },
+                icon: const Icon(Icons.arrow_back),
+              ),
+              IconButton(
+                onPressed: () {
+                  if (_currentPage < _document.pages.count) {
+                    setState(() {
+                      _currentPage++;
+                    });
+                  }
+                },
+                icon: const Icon(Icons.arrow_forward),
+              ),
+            ],
+          ),
           // PDF Preview with Draggable Signature
           Expanded(
             child: Stack(
@@ -313,7 +362,7 @@ class _ESignScreenState extends ConsumerState<ESignScreen> {
           ),
           // Signature Drawing Area
           Container(
-            height: 200,
+            height: 120,
             color: Colors.grey[200],
             child:
                 _isDrawing
