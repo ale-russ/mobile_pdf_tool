@@ -5,7 +5,7 @@ import 'package:pdf_tool/routes/router.dart';
 
 import 'providers/theme_provider.dart';
 import 'utils/app_colors.dart';
-import 'utils/scaffold_uitiltiy.dart';
+import 'utils/scaffold_utiltiy.dart';
 
 void main() {
   runApp(ProviderScope(child: MyApp()));

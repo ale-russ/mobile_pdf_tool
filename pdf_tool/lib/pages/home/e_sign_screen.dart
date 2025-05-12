@@ -7,19 +7,18 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:logger/logger.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:pdf_tool/providers/pdf_state_provider.dart';
-import 'package:pdf_tool/widgets/add_button.dart';
-import 'package:pdf_tool/widgets/submit_button.dart';
 import 'package:signature/signature.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
+import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
+import '../../providers/pdf_state_provider.dart';
 import '../../utils/app_colors.dart';
-import '../../utils/helper_methods.dart';
-import '../../utils/scaffold_uitiltiy.dart';
+import '../../utils/scaffold_utiltiy.dart';
+import '../../widgets/add_button.dart';
 
 class ESignScreen extends ConsumerStatefulWidget {
-  const ESignScreen({super.key, this.pdfPath});
-  final String? pdfPath;
+  const ESignScreen({super.key, required this.pdfPath});
+  final String pdfPath;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _ESignScreenState();
@@ -33,13 +32,32 @@ class _ESignScreenState extends ConsumerState<ESignScreen> {
     exportBackgroundColor: Colors.transparent,
   );
 
+  final List<List<Point>> _drawingHistory = [];
   Uint8List? _signatureImage;
   bool _isDrawing = true;
-  double _signatureX = 50;
-  double _signatureY = 50;
-  double _signatureWidth = 150;
-  double _signatureHeight = 50;
+  Offset _signaturePosition = const Offset(50, 50);
+  final double _signatureWidth = 150;
+  final double _signatureHeight = 50;
   int _currentPage = 1;
+  late final PdfDocument _document;
+  bool _isDragging = false;
+
+  @override
+  initState() {
+    Future<void> initializeDocument() async {
+      final pdfFile = File(widget.pdfPath);
+      _document = PdfDocument(inputBytes: await pdfFile.readAsBytes());
+    }
+
+    _controller.addListener(() {
+      if (_controller.points.isNotEmpty) {
+        _drawingHistory.add(List.from(_controller.points));
+      }
+    });
+
+    initializeDocument();
+    super.initState();
+  }
 
   @override
   void dispose() {
@@ -72,6 +90,15 @@ class _ESignScreenState extends ConsumerState<ESignScreen> {
     }
   }
 
+  void _undoDrawing() {
+    setState(() {
+      _isDrawing = true;
+      _signatureImage = null;
+    });
+    _controller.clear();
+    _drawingHistory.clear();
+  }
+
   Future<void> _signPdf() async {
     try {
       if (_isDrawing) {
@@ -94,12 +121,8 @@ class _ESignScreenState extends ConsumerState<ESignScreen> {
         return;
       }
 
-      // Load the PDF
-      final pdfFile = File(widget.pdfPath!);
-      final document = PdfDocument(inputBytes: await pdfFile.readAsBytes());
-
       // Ensure the current page exists
-      if (_currentPage < 1 || _currentPage > document.pages.count) {
+      if (_currentPage < 1 || _currentPage > _document.pages.count) {
         GlobalScaffold.showSnackbar(
           message: 'Invalid page number',
           backgroundColor: Colors.red,
@@ -108,15 +131,56 @@ class _ESignScreenState extends ConsumerState<ESignScreen> {
       }
 
       // Add the signature to the specified page
-      final page = document.pages[_currentPage - 1];
+      final page = _document.pages[_currentPage - 1];
+      final pdfPageWidth = page.getClientSize().width;
+      final pdfPageHeight = page.getClientSize().height;
+
+      final screenWidth = MediaQuery.of(context).size.width;
+      final screenHeight =
+          MediaQuery.of(context).size.height - kToolbarHeight - 200;
+
+      final pdfAspectRatio = pdfPageWidth / pdfPageHeight;
+      final screenAspectRatio = screenWidth / screenHeight;
+
+      double scaleFactor;
+      double offsetX = 0;
+      double offsetY = 0;
+
+      if (pdfAspectRatio > screenAspectRatio) {
+        // PDF is wider than the screen: fit by width
+        scaleFactor = pdfPageWidth / screenWidth;
+        final displayHeight = screenWidth / pdfAspectRatio;
+        offsetY = (screenHeight - displayHeight) / 2;
+      } else {
+        // Pdf is taller than the screen: fit by height
+        scaleFactor = pdfPageHeight / screenHeight;
+        final displayedWidth = screenHeight * pdfAspectRatio;
+        offsetX = (screenWidth - displayedWidth) / 2;
+      }
+
+      final pdfX = (_signaturePosition.dx - offsetX) * scaleFactor;
+      final pdfY = (_signaturePosition.dy - offsetX) * scaleFactor;
+      final pdfWidth = _signatureWidth * scaleFactor;
+      final pdfHeight = _signatureHeight * scaleFactor;
+
+      log.i(
+        'Screen position: ${_signaturePosition.dx}, ${_signaturePosition.dy}',
+      );
+      log.i('PDF position: $pdfX, $pdfY');
+      log.i('PDF page size: $pdfPageWidth x $pdfPageHeight');
+      log.i('Scaled size: $pdfWidth x $pdfHeight');
+
+      final finalX = pdfX.clamp(0, pdfPageWidth - pdfWidth);
+      final finalY = pdfY.clamp(0, pdfPageHeight - pdfHeight);
+
       final PdfBitmap signatureBitmap = PdfBitmap(_signatureImage!);
       page.graphics.drawImage(
         signatureBitmap,
         Rect.fromLTWH(
-          _signatureX,
-          _signatureY,
-          _signatureWidth,
-          _signatureHeight,
+          finalX.toDouble(),
+          finalY.toDouble(),
+          pdfWidth,
+          pdfHeight,
         ),
       );
 
@@ -126,8 +190,8 @@ class _ESignScreenState extends ConsumerState<ESignScreen> {
       final signedPath =
           '${directory.path}/signed_${DateTime.now().millisecondsSinceEpoch}.pdf';
       final signedFile = File(signedPath);
-      await signedFile.writeAsBytes(await document.save());
-      document.dispose();
+      await signedFile.writeAsBytes(await _document.save());
+      _document.dispose();
 
       // update the state
       ref.read(pdfStateProvider.notifier).setPdfPath([signedPath]);
@@ -153,228 +217,166 @@ class _ESignScreenState extends ConsumerState<ESignScreen> {
         title: const Text('E-Sign PDF'),
         backgroundColor: AppColors.white,
         leading: IconButton(
-          onPressed: () => context.pop(),
+          onPressed: () => Navigator.pop(context),
           icon: const Icon(Icons.arrow_back),
         ),
         elevation: 0.5,
+        actions: [IconButton(onPressed: _undoDrawing, icon: Icon(Icons.undo))],
       ),
-      body: SingleChildScrollView(
-        child: SizedBox(
-          height: MediaQuery.of(context).size.height * 0.8,
-          child:
-              widget.pdfPath == null || widget.pdfPath!.isEmpty
-                  ? Container(
-                    color: Colors.green,
-
-                    child: Column(
-                      children: [
-                        Center(
-                          child: Text(
-                            "No File Loaded",
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              color: Color(0xFF374151),
+      body: Column(
+        children: [
+          // PDF Preview with Draggable Signature
+          Expanded(
+            child: Stack(
+              children: [
+                SfPdfViewer.file(
+                  File(widget.pdfPath),
+                  initialPageNumber: _currentPage,
+                  onPageChanged: (details) {
+                    setState(() {
+                      _currentPage = details.newPageNumber;
+                    });
+                  },
+                ),
+                if (_signatureImage != null ||
+                    (_isDrawing && _controller.points.isNotEmpty))
+                  Positioned(
+                    left: _signaturePosition.dx,
+                    top: _signaturePosition.dy,
+                    child: GestureDetector(
+                      onPanStart: (_) {
+                        setState(() => _isDragging = true);
+                      },
+                      onPanUpdate: (details) {
+                        setState(() {
+                          _signaturePosition += details.delta;
+                          // Keep the signature within bounds
+                          _signaturePosition = Offset(
+                            _signaturePosition.dx.clamp(
+                              0,
+                              MediaQuery.of(context).size.width -
+                                  _signatureWidth,
                             ),
-                          ),
+                            _signaturePosition.dy.clamp(
+                              0,
+                              MediaQuery.of(context).size.height -
+                                  _signatureHeight -
+                                  kToolbarHeight,
+                            ),
+                          );
+                        });
+                      },
+                      onPanEnd: (_) {
+                        setState(() => _isDragging = false);
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          border:
+                              _isDragging
+                                  ? Border.all(color: Colors.blue, width: 2)
+                                  : null,
                         ),
-                        Spacer(flex: 4),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                          child: AddButton(),
-                        ),
-                      ],
+                        child:
+                            _isDrawing
+                                ? FutureBuilder<Uint8List?>(
+                                  future: _controller.toPngBytes(),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.hasData &&
+                                        snapshot.data != null) {
+                                      return Image.memory(
+                                        snapshot.data!,
+                                        width: _signatureWidth,
+                                        height: _signatureHeight,
+                                      );
+                                    }
+                                    return const SizedBox.shrink();
+                                  },
+                                )
+                                : Image.memory(
+                                  _signatureImage!,
+                                  width: _signatureWidth,
+                                  height: _signatureHeight,
+                                ),
+                      ),
                     ),
-                  )
-                  : Column(
-                    children: [
-                      Expanded(
-                        child: SingleChildScrollView(
-                          child: Column(
-                            children: [
-                              const SizedBox(height: 20),
-                              Text(
-                                'Page: $_currentPage',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  IconButton(
-                                    onPressed: () {
-                                      setState(() {
-                                        if (_currentPage > 1) _currentPage--;
-                                      });
-                                    },
-                                    icon: const Icon(Icons.arrow_back),
-                                  ),
-                                  IconButton(
-                                    onPressed: () {
-                                      setState(() {
-                                        _currentPage++;
-                                      });
-                                    },
-                                    icon: const Icon(Icons.arrow_forward),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 20),
-
-                              _isDrawing
-                                  ? Signature(
-                                    controller: _controller,
-                                    height: 200,
-                                    backgroundColor: Colors.grey[200]!,
-                                  )
-                                  : _signatureImage != null
-                                  ? Image.memory(
-                                    _signatureImage!,
-                                    width: 200,
-                                    height: 200,
-                                  )
-                                  : const Text('No signature uploaded'),
-                              const SizedBox(height: 20),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: AppColors.primaryColor,
-                                      shape: BeveledRectangleBorder(
-                                        borderRadius: BorderRadius.circular(2),
-                                      ),
-                                    ),
-                                    onPressed: () {
-                                      setState(() {
-                                        _isDrawing = true;
-                                        _signatureImage = null;
-                                      });
-                                      _controller.clear();
-                                    },
-                                    child: Text(
-                                      "Draw Signature",
-                                      style: TextStyle(color: AppColors.white),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 10),
-                                  ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: AppColors.accentColor,
-                                      shape: BeveledRectangleBorder(
-                                        borderRadius: BorderRadius.circular(2),
-                                      ),
-                                    ),
-                                    onPressed: _uploadSignature,
-                                    child: Text(
-                                      "Upload Signature",
-                                      style: TextStyle(color: AppColors.white),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 20),
-                              const Text(
-                                "Adjust Signature Position and Size",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-
-                              Container(
-                                height: 200,
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                ),
-                                child: Column(
-                                  children: [
-                                    const Text('Horizontal Position'),
-                                    Expanded(
-                                      child: Slider(
-                                        value: _signatureX,
-                                        min: 0,
-                                        max: 500,
-                                        onChanged:
-                                            (value) => setState(
-                                              () => _signatureX = value,
-                                            ),
-                                      ),
-                                    ),
-                                    Text("${_signatureX.toInt()}"),
-                                    Row(
-                                      children: [
-                                        const Text("Vertical Position"),
-                                        Expanded(
-                                          child: Slider(
-                                            value: _signatureY,
-                                            min: 0,
-                                            max: 700,
-                                            onChanged:
-                                                (value) => setState(
-                                                  () => _signatureY = value,
-                                                ),
-                                          ),
-                                        ),
-                                        Text('${_signatureY.toInt()}'),
-                                      ],
-                                    ),
-                                    Row(
-                                      children: [
-                                        const Text('Width: '),
-                                        Expanded(
-                                          child: Slider(
-                                            value: _signatureWidth,
-                                            min: 50,
-                                            max: 300,
-                                            onChanged: (value) {
-                                              setState(
-                                                () => _signatureWidth = value,
-                                              );
-                                            },
-                                          ),
-                                        ),
-                                        Text('${_signatureWidth.toInt()}'),
-                                      ],
-                                    ),
-                                    Row(
-                                      children: [
-                                        const Text('Height: '),
-                                        Expanded(
-                                          child: Slider(
-                                            value: _signatureHeight,
-                                            min: 20,
-                                            max: 150,
-                                            onChanged: (value) {
-                                              setState(
-                                                () => _signatureHeight = value,
-                                              );
-                                            },
-                                          ),
-                                        ),
-                                        Text('${_signatureHeight.toInt()}'),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: SubmitButton(
-                          title: 'Sign PDF',
-                          onPressed: _signPdf,
-                        ),
-                      ),
-                    ],
                   ),
-        ),
+                Positioned(
+                  right: 8,
+                  bottom: MediaQuery.of(context).size.height * 0.1,
+                  child: CircularAddButton(
+                    onPressed: _signPdf,
+                    icon: Icons.sign_language,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          // Signature Drawing Area
+          Container(
+            height: 200,
+            color: Colors.grey[200],
+            child:
+                _isDrawing
+                    ? Signature(
+                      controller: _controller,
+                      backgroundColor: Colors.grey[200]!,
+                    )
+                    : _signatureImage != null
+                    ? Image.memory(
+                      _signatureImage!,
+                      height: 200,
+                      width: double.infinity,
+                      fit: BoxFit.contain,
+                    )
+                    : const Center(child: Text('No signature uploaded')),
+          ),
+          // Controls
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primaryColor,
+                    shape: BeveledRectangleBorder(
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                  onPressed: () {
+                    if (_drawingHistory.isNotEmpty) {
+                      setState(() {
+                        _drawingHistory.removeLast();
+                        if (_drawingHistory.isNotEmpty) {
+                          _controller.points = List.from(_drawingHistory.last);
+                        } else {
+                          _controller.clear();
+                        }
+                      });
+                    }
+                  },
+                  child: const Text(
+                    'Draw Signature',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.accentColor,
+                    shape: BeveledRectangleBorder(
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                  onPressed: _uploadSignature,
+                  child: const Text(
+                    'Upload Signature',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

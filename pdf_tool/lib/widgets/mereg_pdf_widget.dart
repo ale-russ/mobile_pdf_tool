@@ -12,7 +12,6 @@ import '../providers/pdf_state_provider.dart';
 import '../services/pdf_services.dart';
 import '../utils/app_colors.dart';
 import '../utils/helper_methods.dart';
-import '../utils/pdf_util.dart';
 import 'submit_button.dart';
 
 class MergePdfWidget extends ConsumerStatefulWidget {

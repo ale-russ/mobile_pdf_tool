@@ -33,9 +33,6 @@ class HelperMethods {
       if (validPaths.isNotEmpty) {
         List<String> paths = result.paths.whereType<String>().toList();
         ref.read(pdfStateProvider.notifier).setPdfPath(paths);
-        // ref.read(pdfStateProvider.notifier).state = ref
-        //     .read(pdfStateProvider)
-        //     .copyWith(selectedPdfs: validPaths);
         ref.read(pdfStateProvider.notifier).updateSelectedPdfs(validPaths);
         final recentFileStorage = RecentFileStorage();
         await recentFileStorage.addFile(validPaths.first);

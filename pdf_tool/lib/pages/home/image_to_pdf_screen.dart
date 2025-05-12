@@ -1,20 +1,16 @@
 import 'dart:developer';
 import 'dart:io';
 
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
 import '../../providers/pdf_state_provider.dart';
 import '../../services/pdf_services.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/helper_methods.dart';
-import '../../utils/image_utils.dart';
 import '../../widgets/add_button.dart';
-import '../../widgets/save_file_icon_widget.dart';
 
 class ImageToPdfScreen extends ConsumerStatefulWidget {
   const ImageToPdfScreen({super.key});

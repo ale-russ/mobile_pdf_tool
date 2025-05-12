@@ -1,6 +1,5 @@
 import 'dart:developer';
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +13,6 @@ import '../../providers/pdf_state_provider.dart';
 import '../../services/pdf_services.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/helper_methods.dart';
-import '../../utils/pdf_util.dart';
 import '../../widgets/add_button.dart';
 import '../../widgets/save_file_icon_widget.dart';
 import '../../widgets/search_widget.dart';

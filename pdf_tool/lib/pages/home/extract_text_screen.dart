@@ -154,8 +154,6 @@ class _ExtractTextScreenState extends ConsumerState<ExtractTextScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final extractState = ref.watch(extractTextFromImageProvider);
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
