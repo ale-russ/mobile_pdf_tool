@@ -59,7 +59,7 @@ class ESignState extends Equatable {
   );
 
   ESignState copyWith({
-    List<List<Point>>? drawintHistory,
+    List<List<Point>>? drawingHistory,
     Uint8List? signatureImage,
     Uint8List? cachedSignature,
     bool? isDrawing,
@@ -122,7 +122,7 @@ class ESignNotifier extends StateNotifier<ESignState> {
   }
 
   void updateDrawingHistory(List<List<Point>> history) {
-    state = state.copyWith(drawintHistory: history);
+    state = state.copyWith(drawingHistory: history);
   }
 
   void setCachedSignature(Uint8List? cachedSignature) {
@@ -133,8 +133,8 @@ class ESignNotifier extends StateNotifier<ESignState> {
     state = state.copyWith(signatureImage: image);
   }
 
-  void setIsDrawing(bool isDrwaing) {
-    state = state.copyWith(isDrawing: isDrwaing);
+  void setIsDrawing(bool isDrawing) {
+    state = state.copyWith(isDrawing: isDrawing);
   }
 
   void updateSignaturePosition(
@@ -213,7 +213,7 @@ class ESignNotifier extends StateNotifier<ESignState> {
       signatureHeight: 50,
       initialSignatureWidth: 150,
       initialSignatureHeight: 50,
-      drawintHistory: [],
+      drawingHistory: [],
     );
   }
 }

@@ -10,6 +10,7 @@ class PdfState {
   final String? splitPdfPath;
   final Uint8List? pdfBytes;
   final String? extractedText;
+  final bool isLoading;
 
   PdfState({
     this.pdfPaths,
@@ -19,6 +20,7 @@ class PdfState {
     this.splitPdfPath = '',
     this.pdfBytes,
     this.extractedText = "",
+    this.isLoading = false,
   });
 
   PdfState copyWith({
@@ -29,6 +31,7 @@ class PdfState {
     String? splitPdfPath,
     Uint8List? pdfBytes,
     String? extractedText,
+    bool isLoading = false,
   }) {
     return PdfState(
       pdfPaths: pdfPaths ?? this.pdfPaths,
@@ -38,6 +41,7 @@ class PdfState {
       splitPdfPath: splitPdfPath ?? this.splitPdfPath,
       pdfBytes: pdfBytes ?? this.pdfBytes,
       extractedText: extractedText ?? this.extractedText,
+      isLoading: isLoading,
     );
   }
 }
@@ -67,6 +71,10 @@ class PdfStateNotifier extends StateNotifier<PdfState> {
 
   void clearPdfPaths() {
     state = state.copyWith(pdfPaths: []);
+  }
+
+  void setLoading(bool isLoading) {
+    state = state.copyWith(isLoading: isLoading);
   }
 }
 
