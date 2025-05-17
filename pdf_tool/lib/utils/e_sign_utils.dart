@@ -11,7 +11,7 @@ import 'package:syncfusion_flutter_pdf/pdf.dart';
 class ESignUtils {
   final Logger log = Logger();
   final SignatureController controller = SignatureController(
-    penStrokeWidth: 3,
+    penStrokeWidth: 2,
     penColor: Colors.black,
     exportBackgroundColor: Colors.transparent,
   );

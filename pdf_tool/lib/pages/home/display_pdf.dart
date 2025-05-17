@@ -76,20 +76,20 @@ class DisplayPDFScreen extends ConsumerWidget {
               ),
             ],
           ),
-          if (pdfState.pdfPaths != null)
-            Positioned(
-              right: 8,
-              bottom: MediaQuery.of(context).size.height * 0.2,
-              child: CircularAddButton(
-                onPressed: () {
-                  context.push(
-                    "/home/sign-pdf",
-                    extra: pdfState.pdfPaths!.first,
-                  );
-                },
-                icon: Icons.sign_language,
-              ),
-            ),
+          // if (pdfState.pdfPaths != null)
+          //   Positioned(
+          //     right: 8,
+          //     bottom: MediaQuery.of(context).size.height * 0.2,
+          //     child: CircularAddButton(
+          //       onPressed: () {
+          //         context.push(
+          //           "/home/sign-pdf",
+          //           extra: pdfState.pdfPaths!.first,
+          //         );
+          //       },
+          //       icon: Icons.sign_language,
+          //     ),
+          //   ),
         ],
       ),
     );
